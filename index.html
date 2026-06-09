@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MYKorner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Arimo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#283553;
+  --beige:#F8F2DF;
+  --yellow:#FFCE00;
+  --grey:#E2E3DA;
+  --white:#FFFFFF;
+  --text-sm:12px;
+  --text-md:14px;
+  --text-base:16px;
+  --text-lg:18px;
+  --text-xl:20px;
+}
+body{
+  background:#f0f0f0;
+  font-family:'Arimo',Arial,sans-serif;
+  display:flex;
+  justify-content:center;
+  min-height:100vh;
+}
+#app{
+  width:430px;
+  min-height:100vh;
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+}
+/* TOP BAR */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#fff;
+  border-bottom:1px solid var(--grey);
+  height:68px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 16px;
+}
+.burger-btn{
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.burger-btn span{
+  display:block;
+  width:20px;
+  height:2px;
+  background:var(--navy);
+  border-radius:1px;
+}
+.logo{
+  height:35px;
+  object-fit:contain;
+}
+.logo-text{
+  font-family:'Libre Baskerville',serif;
+  font-weight:700;
+  color:var(--navy);
+  font-size:18px;
+  letter-spacing:1px;
+  display:flex;
+  align-items:center;
+  gap:0;
+}
+.logo-badge{
+  background:var(--navy);
+  color:#fff;
+  border-radius:50%;
+  width:22px;
+  height:22px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:700;
+  margin-right:2px;
+}
+.topbar-right{display:flex;justify-content:flex-end;}
+
+/* PROGRESS BAR (fidélité only) */
+.progress-bar-section{
+  background:var(--beige);
+  border-bottom:1px solid var(--beige);
+  padding:12px 16px;
+  display:none;
+}
+.progress-bar-section.visible{display:block;}
+.pb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.pb-status-badge{
+  border:1px solid var(--navy);
+  color:var(--navy);
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  font-size:14px;
+  padding:3px 8px;
+  border-radius:3px;
+  margin-right:8px;
+}
+.pb-label{color:var(--navy);font-size:14px;}
+.pb-points{font-family:Arial,sans-serif;font-weight:700;font-size:16px;color:var(--navy);}
+.pb-track{
+  background:var(--grey);
+  border-radius:2px;
+  height:4px;
+  width:100%;
+  position:relative;
+}
+.pb-fill{
+  background:var(--navy);
+  height:100%;
+  border-radius:2px;
+  transition:width .4s;
+}
+
+/* DRAWER */
+.drawer-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:200;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+.drawer{
+  position:fixed;
+  top:0;left:0;bottom:0;
+  width:260px;
+  background:#fff;
+  z-index:201;
+  transform:translateX(-100%);
+  transition:transform .25s;
+  display:flex;
+  flex-direction:column;
+  padding:0;
+}
+.drawer.open{transform:translateX(0);}
+.drawer-header{
+  background:var(--navy);
+  padding:24px 20px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.drawer-username{color:#fff;font-weight:700;font-size:16px;}
+.drawer-subtitle{color:rgba(255,255,255,.7);font-size:12px;}
+.drawer-nav{list-style:none;flex:1;overflow-y:auto;padding:8px 0;}
+.drawer-nav li a{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;
+  color:var(--navy);
+  text-decoration:none;
+  font-size:15px;
+  border-bottom:1px solid #f5f5f5;
+  transition:background .15s;
+}
+.drawer-nav li a:hover,.drawer-nav li a.active{background:var(--beige);}
+.drawer-nav li a .nav-icon{font-size:18px;width:22px;text-align:center;}
+.drawer-footer{padding:20px;border-top:1px solid var(--grey);}
+.btn-logout{
+  width:100%;padding:10px;
+  border:1px solid var(--navy);
+  background:#fff;color:var(--navy);
+  font-size:14px;cursor:pointer;
+  border-radius:2px;
+}
+
+/* SCREENS */
+.screen{display:none;overflow-y:auto;height:calc(100vh - 68px);}
+.screen.active{display:block;}
+.section-content{padding:16px;}
+
+/* TITLE COMPONENT */
+.section-title{
+  border-left:2px solid var(--navy);
+  padding-left:8px;
+  margin-bottom:16px;
+}
+.section-title h2{
+  font-family:'Libre Baskerville',serif;
+  font-weight:700;
+  font-size:20px;
+  color:var(--navy);
+  line-height:1;
+}
+.section-title p{
+  font-size:12px;
+  color:var(--navy);
+  margin-top:4px;
+}
+
+/* BUTTONS */
+.btn-primary{
+  background:var(--navy);
+  color:#fff;
+  border:1px solid var(--navy);
+  padding:14px;
+  width:100%;
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:2px;
+  text-align:center;
+}
+.btn-secondary{
+  background:#fff;
+  color:var(--navy);
+  border:1px solid var(--navy);
+  padding:14px;
+  width:100%;
+  font-family:Arial,sans-serif;
+  font-size:15px;
+  cursor:pointer;
+  border-radius:2px;
+}
+
+/* ===== FIDÉLITÉ ===== */
+.fidelite-screen .screen-body{padding-bottom:32px;}
+
+/* Persona switcher in topbar */
+.persona-switcher{
+  position:relative;
+}
+.persona-btn{
+  background:none;
+  border:1px solid var(--navy);
+  color:var(--navy);
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:3px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:4px;
+}
+.persona-btn svg{transition:transform .2s;}
+.persona-btn.open svg{transform:rotate(180deg);}
+.persona-dropdown{
+  position:absolute;
+  top:calc(100% + 4px);
+  right:0;
+  background:#fff;
+  border:1px solid var(--navy);
+  border-radius:4px;
+  overflow:hidden;
+  z-index:150;
+  min-width:130px;
+  display:none;
+}
+.persona-dropdown.open{display:block;}
+.persona-option{
+  padding:10px 14px;
+  font-size:13px;
+  color:var(--navy);
+  cursor:pointer;
+  border-bottom:1px solid var(--grey);
+  display:flex;align-items:center;gap:8px;
+}
+.persona-option:last-child{border-bottom:none;}
+.persona-option:hover{background:var(--beige);}
+.persona-option.active{background:var(--beige);font-weight:700;}
+.persona-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* Status cards horizontal scroll */
+.status-carousel{
+  overflow-x:auto;
+  display:flex;
+  gap:12px;
+  padding-bottom:12px;
+  scrollbar-width:none;
+}
+.status-carousel::-webkit-scrollbar{display:none;}
+.status-card{
+  flex-shrink:0;
+  width:270px;
+  border:1px solid var(--navy);
+  border-radius:8px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  background:var(--beige);
+  transition:opacity .3s;
+}
+.status-card.locked{background:#fff;opacity:.65;}
+.status-card-header{display:flex;align-items:center;gap:8px;}
+.status-icon-wrap{
+  width:32px;height:32px;
+  border:1.2px solid var(--navy);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.status-name{
+  font-weight:700;
+  font-size:16px;
+  color:var(--navy);
+}
+.status-threshold{font-size:10px;color:var(--navy);}
+.status-badge{
+  margin-left:auto;
+  border:1px solid var(--navy);
+  color:var(--navy);
+  font-size:10px;
+  padding:2px 5px;
+  border-radius:4px;
+  font-family:Arial,sans-serif;
+  white-space:nowrap;
+}
+.status-divider{height:1px;background:var(--navy);width:100%;}
+.status-perk{
+  display:flex;align-items:center;gap:8px;
+  font-size:14px;color:var(--navy);
+}
+.status-perk-icon{width:20px;height:20px;flex-shrink:0;font-size:16px;text-align:center;}
+.status-progress-text{font-size:10px;color:var(--navy);}
+.status-progress-track{
+  background:var(--grey);
+  border-radius:1.5px;
+  height:3px;
+  margin-top:4px;
+  position:relative;
+}
+.status-progress-fill{
+  background:var(--navy);
+  height:100%;
+  border-radius:1.5px;
+  transition:width .4s;
+}
+
+/* Dots */
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px;}
+.dot{width:6px;height:6px;border-radius:3px;background:var(--beige);}
+.dot.active{width:20px;background:var(--navy);}
+
+/* Gift cards (récompenses) */
+.gift-card{
+  background:var(--beige);
+  border-left:2px solid var(--navy);
+  border-radius:0 8px 8px 0;
+  padding:16px 16px 16px 18px;
+  margin-bottom:8px;
+}
+.gift-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.gift-card-label{font-size:14px;color:var(--navy);font-family:Arial,sans-serif;}
+.gift-card-amount{font-family:Arial,sans-serif;font-weight:700;font-size:18px;color:var(--navy);}
+.gift-card-info{font-size:10px;color:var(--navy);}
+.gift-active-badge{
+  background:var(--navy);
+  color:#fff;
+  font-size:12px;
+  padding:2px 12px;
+  border-radius:24px;
+  display:flex;align-items:center;gap:4px;
+}
+.gift-active-badge::before{content:'';width:4px;height:4px;background:#fff;border-radius:50%;}
+.gift-divider{height:1px;background:var(--grey);margin:10px 0;}
+.code-row{
+  border:1px dashed var(--navy);
+  background:#fff;
+  border-radius:4px;
+  padding:9px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+}
+.code-text{flex:1;font-family:Arial,sans-serif;font-size:16px;color:var(--navy);}
+.copy-btn{
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  padding:8px 12px;
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  white-space:nowrap;
+  display:flex;align-items:center;gap:6px;
+}
+.gift-expiry{font-size:10px;color:var(--navy);margin-top:4px;}
+
+/* Points store */
+.points-carousel{
+  overflow-x:auto;
+  display:flex;
+  gap:12px;
+  padding-bottom:4px;
+  scrollbar-width:none;
+}
+.points-carousel::-webkit-scrollbar{display:none;}
+.point-item{
+  flex-shrink:0;
+  width:145px;
+  border:1px solid var(--navy);
+  background:var(--beige);
+  border-radius:6px;
+  padding:14px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.point-item.unavailable{opacity:.5;}
+.point-item-name{font-size:14px;color:var(--navy);}
+.point-item-pts{font-size:13px;color:var(--navy);}
+.point-exchange-btn{
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  border-radius:2px;
+  padding:7px;
+  font-family:Arial,sans-serif;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  width:100%;
+}
+
+/* History button */
+.history-btn{
+  background:#fff;
+  border:1px solid var(--navy);
+  color:var(--navy);
+  width:100%;
+  padding:16px;
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  cursor:pointer;
+  font-family:'Arimo',sans-serif;
+  font-weight:700;
+  font-size:16px;
+}
+
+/* ===== COMMANDES ===== */
+.tab-filter{
+  display:flex;gap:8px;margin-bottom:16px;
+}
+.tab-btn{
+  border:1px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  padding:6px 14px;
+  border-radius:4px;
+  font-size:14px;
+  cursor:pointer;
+}
+.tab-btn.active{
+  background:var(--navy);
+  color:#fff;
+}
+.order-card{
+  border:1px solid var(--grey);
+  border-radius:4px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.order-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.order-thumb{
+  width:90px;height:70px;
+  background:var(--grey);
+  border-radius:4px;
+  flex-shrink:0;
+  object-fit:cover;
+}
+.order-meta{flex:1;}
+.order-brand-icon{
+  width:24px;height:24px;
+  border-radius:50%;
+  margin-bottom:4px;
+  display:inline-block;
+}
+.brand-yk{background:var(--yellow);}
+.brand-lk{background:var(--navy);}
+.order-num{font-size:14px;color:var(--navy);margin-bottom:4px;}
+.order-total{font-size:16px;color:var(--navy);font-weight:700;}
+.order-count{font-size:11px;color:#666;margin-top:2px;}
+.order-status{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--grey);
+  border-radius:4px;
+  padding:6px 12px;
+  font-size:14px;
+  color:var(--navy);
+  margin-top:8px;
+}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
+.order-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.order-btn{
+  border:1px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  padding:12px;
+  border-radius:2px;
+  font-size:14px;
+  cursor:pointer;
+  text-align:center;
+}
+.order-btn.primary-action{background:var(--navy);color:#fff;}
+
+/* ===== CERTIFICATS ===== */
+.cert-card{
+  border:1px solid var(--grey);
+  border-radius:4px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.cert-info{display:flex;gap:12px;margin-bottom:12px;}
+.cert-thumb{
+  width:90px;height:66px;
+  background:var(--grey);
+  border-radius:4px;
+  flex-shrink:0;
+}
+.cert-details{flex:1;}
+.cert-title{font-size:16px;color:var(--navy);font-weight:700;margin-bottom:2px;}
+.cert-artist{font-size:14px;color:var(--navy);margin-bottom:6px;}
+.cert-edition-row{display:flex;align-items:center;gap:8px;}
+.cert-format{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--navy);
+}
+.cert-format-dot{width:22px;height:22px;border-radius:50%;background:var(--grey);flex-shrink:0;}
+.cert-edition-num{font-size:16px;font-weight:700;color:var(--navy);text-align:right;}
+.cert-edition-label{font-size:14px;color:var(--navy);text-align:right;}
+
+/* ===== WISHLIST ===== */
+.wishlist-subtitle{font-size:14px;color:var(--navy);margin-bottom:12px;}
+.wishlist-share{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.wishlist-share span{font-size:16px;color:var(--navy);}
+.share-icons{display:flex;gap:10px;}
+.share-icon{width:18px;height:18px;background:var(--navy);border-radius:2px;opacity:.7;}
+.art-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.art-card{border:1px solid var(--grey);border-radius:4px;overflow:hidden;}
+.art-thumb{
+  width:100%;
+  aspect-ratio:3/4;
+  background:var(--grey);
+  position:relative;
+}
+.art-thumb-img{width:100%;height:100%;object-fit:cover;}
+.art-card-body{padding:8px 10px;}
+.art-title{font-size:14px;color:var(--navy);font-weight:700;margin-bottom:2px;}
+.art-artist{font-size:12px;color:#555;}
+.art-heart{
+  position:absolute;right:8px;bottom:8px;
+  background:#fff;border-radius:50%;
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.15);
+}
+
+/* ===== ARTISTES & THÈMES ===== */
+.artist-section{margin-bottom:24px;}
+.artist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.artist-name-row{display:flex;align-items:center;gap:10px;}
+.artist-avatar{width:42px;height:42px;border-radius:50%;background:var(--grey);flex-shrink:0;}
+.artist-name{font-size:16px;font-weight:700;color:var(--navy);}
+.artist-tag{font-size:12px;color:var(--navy);}
+.art-h-carousel{
+  overflow-x:auto;
+  display:flex;gap:10px;
+  padding-bottom:8px;
+  scrollbar-width:none;
+}
+.art-h-carousel::-webkit-scrollbar{display:none;}
+.art-h-card{
+  flex-shrink:0;width:200px;
+  border:1px solid var(--grey);
+  border-radius:4px;overflow:hidden;
+}
+.art-h-thumb{width:100%;height:150px;background:var(--grey);}
+.art-h-body{padding:8px 10px;}
+
+/* ===== CARTE CADEAUX ===== */
+.gift-page-card{
+  background:var(--beige);
+  border-left:2px solid var(--navy);
+  border-radius:0 8px 8px 0;
+  padding:16px 16px 16px 18px;
+  margin-bottom:12px;
+}
+.gift-page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.gift-page-name{font-family:'Libre Baskerville',serif;font-weight:700;font-size:18px;color:var(--navy);}
+.gift-page-amount{font-family:Arial,sans-serif;font-weight:700;font-size:24px;color:var(--navy);}
+.gift-page-expiry{font-size:11px;color:var(--navy);margin-top:4px;}
+
+/* ===== ARTFINDER ===== */
+.artfinder-subtitle{font-size:14px;color:var(--navy);margin-bottom:16px;line-height:1.4;}
+
+/* ===== INFORMATIONS ===== */
+.info-block{border:1px solid var(--grey);border-radius:4px;margin-bottom:16px;overflow:hidden;}
+.info-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;
+  border-bottom:1px solid var(--grey);
+}
+.info-row:last-child{border-bottom:none;}
+.info-key{font-size:12px;color:var(--navy);font-family:Arial,sans-serif;text-transform:uppercase;}
+.info-value{font-size:16px;color:var(--navy);text-align:right;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--grey);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-size:16px;color:var(--navy);}
+.toggle{
+  width:48px;height:27px;
+  border-radius:14px;
+  background:var(--grey);
+  position:relative;cursor:pointer;
+  transition:background .2s;
+  flex-shrink:0;
+}
+.toggle.on{background:var(--navy);}
+.toggle-thumb{
+  position:absolute;
+  top:3px;left:3px;
+  width:21px;height:21px;
+  border-radius:50%;
+  background:#fff;
+  transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.toggle.on .toggle-thumb{transform:translateX(21px);}
+
+.loyalty-mini{
+  border:1px solid var(--grey);
+  border-radius:4px;
+  padding:16px;
+  display:flex;align-items:center;gap:12px;
+}
+.loyalty-mini-icon{
+  width:32px;height:32px;
+  border-radius:50%;
+  border:1px solid var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.loyalty-mini-info{flex:1;}
+.loyalty-mini-status{font-size:18px;font-weight:700;color:var(--navy);}
+.loyalty-mini-msg{font-size:12px;color:var(--navy);line-height:1.3;margin-top:2px;}
+.loyalty-mini-pts{font-weight:700;font-size:18px;color:var(--navy);}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--navy);
+  color:#fff;
+  padding:10px 20px;
+  border-radius:20px;
+  font-size:14px;
+  opacity:0;
+  transition:all .3s;
+  pointer-events:none;
+  white-space:nowrap;
+  z-index:500;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* MODAL historique */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:300;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+}
+.modal-overlay.open{display:flex;}
+.modal-sheet{
+  background:#fff;
+  border-radius:12px 12px 0 0;
+  width:430px;
+  max-height:80vh;
+  overflow-y:auto;
+  padding:20px 16px 32px;
+}
+.modal-handle{
+  width:48px;height:4px;
+  background:var(--grey);border-radius:2px;
+  margin:0 auto 20px;
+}
+.hist-item{
+  display:flex;justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid var(--grey);
+  font-size:14px;color:var(--navy);
+}
+.hist-pts{font-weight:700;}
+.hist-pts.gain{color:#2a7a2a;}
+.hist-pts.use{color:#c0392b;}
+
+/* Scrollbar screen */
+.screen::-webkit-scrollbar{width:3px;}
+.screen::-webkit-scrollbar-thumb{background:var(--grey);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar" id="topbar">
+    <button class="burger-btn" onclick="toggleDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo-text">
+      <span class="logo-badge">MY</span>KORNER
+    </div>
+    <div class="topbar-right" id="topbar-right"></div>
+  </header>
+
+  <!-- PROGRESS BAR (fidélité) -->
+  <div class="progress-bar-section" id="progress-bar">
+    <div class="pb-row">
+      <div style="display:flex;align-items:center;">
+        <span class="pb-status-badge" id="pb-status-badge">EXPLORER</span>
+        <span class="pb-label" id="pb-label">250 € → Art Lover</span>
+      </div>
+      <span class="pb-points" id="pb-points">125 pts</span>
+    </div>
+    <div class="pb-track"><div class="pb-fill" id="pb-fill" style="width:25%"></div></div>
+  </div>
+
+  <!-- DRAWER -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <nav class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-username">Camille Dulèvre</div>
+      <div class="drawer-subtitle">camille.d@example.fr</div>
+    </div>
+    <ul class="drawer-nav" id="drawer-nav">
+      <li><a href="#" onclick="navigate('commandes')" data-screen="commandes"><span class="nav-icon">📦</span>Mes commandes</a></li>
+      <li><a href="#" onclick="navigate('cartes')" data-screen="cartes"><span class="nav-icon">🎁</span>Mes cartes cadeaux</a></li>
+      <li><a href="#" onclick="navigate('certificats')" data-screen="certificats"><span class="nav-icon">🏅</span>Mes certificats</a></li>
+      <li><a href="#" onclick="navigate('fidelite')" data-screen="fidelite"><span class="nav-icon">⭐</span>Mon compte fidélité</a></li>
+      <li><a href="#" onclick="navigate('wishlist')" data-screen="wishlist"><span class="nav-icon">❤️</span>Ma wishlist</a></li>
+      <li><a href="#" onclick="navigate('artistes')" data-screen="artistes"><span class="nav-icon">🎨</span>Artistes & thèmes</a></li>
+      <li><a href="#" onclick="navigate('artfinder')" data-screen="artfinder"><span class="nav-icon">🔍</span>ArtFinder</a></li>
+      <li><a href="#" onclick="navigate('infos')" data-screen="infos"><span class="nav-icon">👤</span>Mes informations</a></li>
+    </ul>
+    <div class="drawer-footer">
+      <button class="btn-logout">Se déconnecter</button>
+    </div>
+  </nav>
+
+  <!-- ===== SCREEN: COMMANDES ===== -->
+  <div class="screen active" id="screen-commandes">
+    <div class="section-content">
+      <div class="section-title"><h2>Mes commandes</h2><p>Historique de vos achats</p></div>
+      <div class="tab-filter">
+        <button class="tab-btn active" onclick="filterOrders(this,'all')">Toutes</button>
+        <button class="tab-btn" onclick="filterOrders(this,'yk')">YellowKorner</button>
+        <button class="tab-btn" onclick="filterOrders(this,'lk')">LabKorner</button>
+      </div>
+      <div id="orders-list">
+        <div class="order-card" data-brand="lk">
+          <div class="order-header">
+            <div class="order-thumb" style="background:linear-gradient(135deg,#c8b89a,#a89070);"></div>
+            <div class="order-meta">
+              <span class="order-brand-icon brand-lk" style="display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;">LK</span>
+              <div class="order-num">Commande #LK-24-0021</div>
+              <div class="order-total">4 524,42 €</div>
+              <div class="order-count">Nombre de produits : 3</div>
+            </div>
+          </div>
+          <div class="order-status"><span class="status-dot"></span>En cours de livraison</div>
+          <div class="order-actions">
+            <button class="order-btn primary-action">Voir le détail</button>
+            <button class="order-btn">Suivre ma commande</button>
+          </div>
+        </div>
+        <div class="order-card" data-brand="yk">
+          <div class="order-header">
+            <div class="order-thumb" style="background:linear-gradient(135deg,#e8d090,#c8a030);"></div>
+            <div class="order-meta">
+              <span class="order-brand-icon brand-yk" style="display:inline-flex;align-items:center;justify-content:center;color:var(--navy);font-size:10px;font-weight:700;">YK</span>
+              <div class="order-num">Commande Z220425 1552686</div>
+              <div class="order-total">1 240,00 €</div>
+              <div class="order-count">Nombre de produits : 2</div>
+            </div>
+          </div>
+          <div class="order-status"><span class="status-dot"></span>En cours de livraison</div>
+          <div class="order-actions">
+            <button class="order-btn primary-action">Voir le détail</button>
+            <button class="order-btn">Suivre ma commande</button>
+          </div>
+        </div>
+        <div class="order-card" data-brand="yk">
+          <div class="order-header">
+            <div class="order-thumb" style="background:linear-gradient(135deg,#b0c8d0,#7090a8);"></div>
+            <div class="order-meta">
+              <span class="order-brand-icon brand-yk" style="display:inline-flex;align-items:center;justify-content:center;color:var(--navy);font-size:10px;font-weight:700;">YK</span>
+              <div class="order-num">Commande Z211203 9874521</div>
+              <div class="order-total">680,00 €</div>
+              <div class="order-count">Nombre de produits : 1</div>
+            </div>
+          </div>
+          <div class="order-status" style="border-color:var(--navy);"><span class="status-dot" style="background:var(--navy);"></span>Livré</div>
+          <div class="order-actions">
+            <button class="order-btn primary-action">Voir le détail</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: CARTES CADEAUX ===== -->
+  <div class="screen" id="screen-cartes">
+    <div class="section-content">
+      <div class="section-title"><h2>Mes cartes cadeaux</h2><p>Vos bons d'achat disponibles</p></div>
+      <div class="gift-page-card">
+        <div class="gift-page-header">
+          <div>
+            <div class="gift-page-name">YellowKorner</div>
+            <div style="font-size:12px;color:var(--navy);margin-top:2px;">Carte cadeau</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="gift-page-amount">150 €</div>
+            <span class="gift-active-badge">Active</span>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--grey);margin:10px 0;"></div>
+        <div class="code-row" onclick="copyCode(this,'YK-GIFT-7823-4490')">
+          <span class="code-text">YK-GIFT-7823-4490</span>
+          <button class="copy-btn">📋 Copier</button>
+        </div>
+        <div class="gift-page-expiry">Expire le 15 décembre 2025</div>
+      </div>
+      <div class="gift-page-card" style="border-left-color:var(--navy);">
+        <div class="gift-page-header">
+          <div>
+            <div class="gift-page-name" style="color:var(--navy);">LabKorner</div>
+            <div style="font-size:12px;color:var(--navy);margin-top:2px;">Carte cadeau</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="gift-page-amount">75 €</div>
+            <span class="gift-active-badge">Active</span>
+          </div>
+        </div>
+        <div style="height:1px;background:var(--grey);margin:10px 0;"></div>
+        <div class="code-row" onclick="copyCode(this,'LK-GIFT-3341-8872')">
+          <span class="code-text">LK-GIFT-3341-8872</span>
+          <button class="copy-btn">📋 Copier</button>
+        </div>
+        <div class="gift-page-expiry">Expire le 30 juin 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: CERTIFICATS ===== -->
+  <div class="screen" id="screen-certificats">
+    <div class="section-content">
+      <div class="section-title"><h2>Mes certificats</h2><p>Authenticité de vos œuvres</p></div>
+      <div class="cert-card">
+        <div class="cert-info">
+          <div class="cert-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div>
+          <div class="cert-details">
+            <div class="cert-title">Tutto Passa</div>
+            <div class="cert-artist">Robbie McIntosh</div>
+            <div class="cert-edition-row">
+              <div class="cert-format">
+                <div class="cert-format-dot"></div>
+                <span>Tirage 90×60</span>
+              </div>
+              <div style="margin-left:auto;text-align:right;">
+                <div class="cert-edition-label">Édition</div>
+                <div class="cert-edition-num">12 / 50</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
+      </div>
+      <div class="cert-card">
+        <div class="cert-info">
+          <div class="cert-thumb" style="background:linear-gradient(135deg,#a8c8a0,#507050);"></div>
+          <div class="cert-details">
+            <div class="cert-title">Blue Morning</div>
+            <div class="cert-artist">Sofia Arnér</div>
+            <div class="cert-edition-row">
+              <div class="cert-format">
+                <div class="cert-format-dot"></div>
+                <span>Tirage 60×40</span>
+              </div>
+              <div style="margin-left:auto;text-align:right;">
+                <div class="cert-edition-label">Édition</div>
+                <div class="cert-edition-num">7 / 30</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: FIDÉLITÉ ===== -->
+  <div class="screen fidelite-screen" id="screen-fidelite">
+    <div class="screen-body">
+      <!-- Mon statut -->
+      <div class="section-content" style="padding-bottom:8px;">
+        <div class="section-title"><h2>Mon statut</h2><p id="fid-status-label">EXPLORER</p></div>
+        <div class="status-carousel" id="status-carousel">
+          <!-- Cards injected by JS -->
+        </div>
+        <div class="dots" id="status-dots"></div>
+      </div>
+
+      <!-- Mes récompenses -->
+      <div class="section-content" style="background:#fff;padding-top:16px;">
+        <div class="section-title"><h2>Mes récompenses</h2><p>Vos bons d'achat actifs</p></div>
+        <div class="gift-card">
+          <div class="gift-card-header">
+            <div>
+              <div class="gift-card-label">BON D'ACHAT</div>
+              <div class="gift-card-amount">10€</div>
+              <div class="gift-card-info">Utilisable dès 15 € d'achat</div>
+            </div>
+            <span class="gift-active-badge">Active</span>
+          </div>
+          <div class="gift-divider"></div>
+          <div class="code-row" onclick="copyCode(this,'YK-XXXX-XXXX-2847')">
+            <span class="code-text">YK-XXXX-XXXX-2847</span>
+            <button class="copy-btn">📋 Copier</button>
+          </div>
+          <div class="gift-expiry">Expire le 15 juin 2025</div>
+        </div>
+        <div class="gift-card">
+          <div class="gift-card-header">
+            <div>
+              <div class="gift-card-label">BON D'ACHAT</div>
+              <div class="gift-card-amount">15€</div>
+              <div class="gift-card-info">Utilisable dès 15 € d'achat · Expire le 15 juin 2026</div>
+            </div>
+            <span class="gift-active-badge">Active</span>
+          </div>
+          <div class="gift-divider"></div>
+          <div class="code-row" onclick="copyCode(this,'LK-XXXX-XXXX-2569')">
+            <span class="code-text">LK-XXXX-XXXX-2569</span>
+            <button class="copy-btn">📋 Copier</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Échanger mes points -->
+      <div class="section-content" style="padding-top:16px;">
+        <div class="section-title"><h2>Échanger mes points</h2><p>Boutique de points</p></div>
+        <div class="points-carousel" id="points-carousel">
+          <div class="point-item unavailable">
+            <div class="point-item-name">Bon d'achat 10 €</div>
+            <div class="point-item-pts">75 pts</div>
+            <button class="point-exchange-btn" disabled style="opacity:.5;cursor:not-allowed;">Échanger</button>
+          </div>
+          <div class="point-item unavailable">
+            <div class="point-item-name">Bon d'achat 20 €</div>
+            <div class="point-item-pts">150 pts</div>
+            <button class="point-exchange-btn" disabled style="opacity:.5;cursor:not-allowed;">Échanger</button>
+          </div>
+          <div class="point-item">
+            <div class="point-item-name">Bon d'achat 30 €</div>
+            <div class="point-item-pts">225 pts</div>
+            <button class="point-exchange-btn" onclick="exchangePoints(this,225)">Échanger</button>
+          </div>
+          <div class="point-item">
+            <div class="point-item-name">Bon d'achat 50 €</div>
+            <div class="point-item-pts">375 pts</div>
+            <button class="point-exchange-btn" onclick="exchangePoints(this,375)">Échanger</button>
+          </div>
+          <div class="point-item">
+            <div class="point-item-name">Bon d'achat 100 €</div>
+            <div class="point-item-pts">750 pts</div>
+            <button class="point-exchange-btn" onclick="exchangePoints(this,750)">Échanger</button>
+          </div>
+        </div>
+        <div class="dots" id="points-dots" style="margin-top:8px;">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Historique -->
+      <div class="section-content" style="padding-top:0;">
+        <button class="history-btn" onclick="openHistModal()">
+          Voir l'historique de mes points
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: WISHLIST ===== -->
+  <div class="screen" id="screen-wishlist">
+    <div class="section-content">
+      <div class="section-title"><h2>Ma wishlist</h2><p>Retrouvez vos coups de cœur</p></div>
+      <p class="wishlist-subtitle">Retrouvez vos coups de cœur de la collection YellowKorner</p>
+      <div class="wishlist-share">
+        <span>Partager ma liste</span>
+        <div class="share-icons">
+          <div class="share-icon"></div>
+          <div class="share-icon"></div>
+          <div class="share-icon"></div>
+          <div class="share-icon"></div>
+          <div class="share-icon"></div>
+        </div>
+      </div>
+      <div class="art-grid">
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);">
+            <div class="art-heart">❤️</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+        </div>
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#b0c8e0,#5080a0);">
+            <div class="art-heart">❤️</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+        </div>
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#e8d8b0,#c0a050);">
+            <div class="art-heart">❤️</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+        </div>
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#d0c0e0,#8060a0);">
+            <div class="art-heart">❤️</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: ARTISTES & THÈMES ===== -->
+  <div class="screen" id="screen-artistes">
+    <div class="section-content">
+      <div class="section-title"><h2>Artistes & thèmes suivis</h2><p>Vos artistes et thèmes favoris</p></div>
+      <div class="artist-section">
+        <div class="artist-header">
+          <div class="artist-name-row">
+            <div class="artist-avatar" style="background:linear-gradient(135deg,#d0c090,#a08040);"></div>
+            <div>
+              <div class="artist-name">MARIO STEFANELLI</div>
+              <div class="artist-tag">à la une</div>
+            </div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div class="art-h-carousel">
+          <div class="art-h-card">
+            <div class="art-h-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div>
+            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+          </div>
+          <div class="art-h-card">
+            <div class="art-h-thumb" style="background:linear-gradient(135deg,#e0c890,#b09030);"></div>
+            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+          </div>
+          <div class="art-h-card">
+            <div class="art-h-thumb" style="background:linear-gradient(135deg,#a8c0d0,#507090);"></div>
+            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+          </div>
+        </div>
+        <button class="btn-secondary" style="margin-top:12px;">+ Ajouter un artiste</button>
+      </div>
+      <div class="artist-section">
+        <div class="artist-header">
+          <div class="artist-name-row">
+            <div>
+              <div class="artist-name">ANIMAL</div>
+              <div class="artist-tag">à la une</div>
+            </div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div class="art-h-carousel">
+          <div class="art-h-card">
+            <div class="art-h-thumb" style="background:linear-gradient(135deg,#b0d0b0,#508050);"></div>
+            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+          </div>
+          <div class="art-h-card">
+            <div class="art-h-thumb" style="background:linear-gradient(135deg,#d0b0c0,#906080);"></div>
+            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+          </div>
+        </div>
+        <button class="btn-secondary" style="margin-top:12px;">+ Ajouter un thème</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: ARTFINDER ===== -->
+  <div class="screen" id="screen-artfinder">
+    <div class="section-content">
+      <div class="section-title"><h2>ArtFinder</h2><p>Votre profil artistique</p></div>
+      <p class="artfinder-subtitle">Votre profil artistique personnalisé — Retrouvez votre sélection Art Finder</p>
+      <div class="art-grid">
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);aspect-ratio:3/4;">
+            <div class="art-heart">🤍</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+        </div>
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#b0c8e0,#5080a0);aspect-ratio:3/4;">
+            <div class="art-heart">🤍</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+        </div>
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#e8d8b0,#c0a050);aspect-ratio:3/4;">
+            <div class="art-heart">🤍</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+        </div>
+        <div class="art-card">
+          <div class="art-thumb" style="background:linear-gradient(135deg,#d0c0e0,#8060a0);aspect-ratio:3/4;">
+            <div class="art-heart">🤍</div>
+          </div>
+          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: INFORMATIONS ===== -->
+  <div class="screen" id="screen-infos">
+    <div class="section-content">
+      <div class="section-title"><h2>Mes informations</h2></div>
+      <div class="info-block">
+        <div class="info-row"><span class="info-key">Prénom</span><span class="info-value">Camille</span></div>
+        <div class="info-row"><span class="info-key">Nom</span><span class="info-value">Dulèvre</span></div>
+        <div class="info-row"><span class="info-key">E-mail</span><span class="info-value" style="font-size:14px;">camille.d@example.fr</span></div>
+        <div class="info-row"><span class="info-key">Date de naissance</span><span class="info-value">16 mars 1985</span></div>
+        <div class="info-row"><span class="info-key">Ma galerie</span><span class="info-value" style="font-size:13px;max-width:200px;text-align:right;">YellowKorner Paris Le Marais</span></div>
+      </div>
+      <button class="btn-primary" style="margin-bottom:16px;font-size:15px;">Modifier mes informations</button>
+
+      <div class="section-title"><h2>Préférences</h2></div>
+      <div class="info-block">
+        <div class="toggle-row">
+          <span class="toggle-label">Newsletter e-mail</span>
+          <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Notifications SMS</span>
+          <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Offres partenaires</span>
+          <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Notifications push</span>
+          <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+
+      <div class="section-title"><h2>Mon programme fidélité</h2></div>
+      <div class="loyalty-mini">
+        <div class="loyalty-mini-icon">◎</div>
+        <div class="loyalty-mini-info">
+          <div class="loyalty-mini-status" id="info-status">ART LOVER</div>
+          <div class="loyalty-mini-msg" id="info-status-msg">Encore 900 € pour devenir Ambassador</div>
+        </div>
+        <div>
+          <div class="loyalty-mini-pts">695</div>
+          <div style="font-size:12px;color:var(--navy);">points</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">Code copié !</div>
+
+  <!-- MODAL HISTORIQUE -->
+  <div class="modal-overlay" id="hist-modal" onclick="closeHistModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="section-title" style="margin-bottom:16px;"><h2>Historique de points</h2></div>
+      <div class="hist-item"><span>Achat - Tutto Passa<br><small>12 avril 2024</small></span><span class="hist-pts gain">+68 pts</span></div>
+      <div class="hist-item"><span>Bienvenue<br><small>01 janvier 2024</small></span><span class="hist-pts gain">+20 pts</span></div>
+      <div class="hist-item"><span>Achat - Blue Morning<br><small>03 mars 2024</small></span><span class="hist-pts gain">+34 pts</span></div>
+      <div class="hist-item"><span>Bon d'achat utilisé<br><small>15 février 2024</small></span><span class="hist-pts use">-50 pts</span></div>
+      <div class="hist-item"><span>Anniversaire<br><small>16 mars 2024</small></span><span class="hist-pts gain">+20 pts</span></div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+// ===== STATE =====
+const personas = {
+  explorer: {
+    label: 'EXPLORER',
+    pbLabel: '250 € → Art Lover',
+    pbPoints: '125 pts',
+    pbFill: 25,
+    statusIdx: 0,
+    perks: ['1 point par euro dépensé','20 points de bienvenue','20 points anniversaire','Frais de port réduits'],
+    progress: { text: 'Il reste 250€ pour atteindre Art Lover', fill: 50 }
+  },
+  artlover: {
+    label: 'ART LOVER',
+    pbLabel: '500 € → Ambassador',
+    pbPoints: '695 pts',
+    pbFill: 55,
+    statusIdx: 1,
+    perks: ['1,5 point par euro dépensé','50 points de bienvenue','Artprint encadré offert','50 points anniversaire','Frais de port réduits','Offres exclusives & évènements'],
+    progress: { text: 'Il reste 900€ pour atteindre Ambassador', fill: 45 }
+  },
+  ambassador: {
+    label: 'AMBASSADOR',
+    pbLabel: '2000 € atteints 🎉',
+    pbPoints: '1 840 pts',
+    pbFill: 100,
+    statusIdx: 2,
+    perks: ['3 points par euro dépensé','200 points de bienvenue','Artshot ou Sélection offert','Livraison offerte sans minimum','Accès VIP galeries'],
+    progress: null
+  }
+};
+
+let currentPersona = 'explorer';
+let currentScreen = 'commandes';
+
+// ===== NAVIGATION =====
+function navigate(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  currentScreen = screen;
+
+  // Progress bar visibility
+  const pb = document.getElementById('progress-bar');
+  pb.classList.toggle('visible', screen === 'fidelite');
+
+  // Persona switcher in topbar
+  const right = document.getElementById('topbar-right');
+  if (screen === 'fidelite') {
+    right.innerHTML = buildPersonaSwitcher();
+  } else {
+    right.innerHTML = '';
+  }
+
+  // Active nav item
+  document.querySelectorAll('#drawer-nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.screen === screen);
+  });
+
+  closeDrawer();
+  if (screen === 'fidelite') renderStatusCards();
+}
+
+// ===== DRAWER =====
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('drawer-overlay').classList.toggle('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+// ===== PERSONA SWITCHER =====
+function buildPersonaSwitcher() {
+  const p = personas[currentPersona];
+  return `
+    <div class="persona-switcher">
+      <button class="persona-btn" id="persona-btn" onclick="togglePersonaDropdown(event)">
+        <span style="font-size:9px;">●</span> ${p.label}
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="persona-dropdown" id="persona-dropdown">
+        ${Object.entries(personas).map(([key, val]) => `
+          <div class="persona-option ${key === currentPersona ? 'active' : ''}" onclick="selectPersona('${key}')">
+            <span class="persona-dot" style="background:${key==='ambassador'?'#c0a000':key==='artlover'?'#283553':'#44aa44'}"></span>
+            ${val.label}
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function togglePersonaDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('persona-dropdown');
+  const btn = document.getElementById('persona-btn');
+  dd.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function selectPersona(key) {
+  currentPersona = key;
+  const p = personas[key];
+
+  // Update progress bar
+  document.getElementById('pb-status-badge').textContent = p.label;
+  document.getElementById('pb-label').textContent = p.pbLabel;
+  document.getElementById('pb-points').textContent = p.pbPoints;
+  document.getElementById('pb-fill').style.width = p.pbFill + '%';
+
+  // Update fidélité title
+  document.getElementById('fid-status-label').textContent = p.label;
+
+  // Update topbar switcher
+  document.getElementById('topbar-right').innerHTML = buildPersonaSwitcher();
+
+  renderStatusCards();
+}
+
+// ===== STATUS CARDS =====
+const statusDefs = [
+  {
+    key: 'explorer',
+    name: 'EXPLORER',
+    threshold: 'Dès l\'inscription',
+    icon: '🧭',
+    perks: ['1 point par euro dépensé', '20 pts bienvenue', '20 pts anniversaire', 'Frais de port réduits'],
+    progressText: 'Il reste 250€ pour atteindre Art Lover',
+    progressFill: 50,
+  },
+  {
+    key: 'artlover',
+    name: 'ART LOVER',
+    threshold: 'Dès 500 € cumulés',
+    icon: '❤️',
+    perks: ['1,5 point par euro dépensé', '50 pts bienvenue', 'Artprint encadré offert', '50 pts anniversaire', 'Frais de port réduits', 'Offres exclusives & évènements'],
+    progressText: 'Il reste 900€ pour atteindre Ambassador',
+    progressFill: 45,
+  },
+  {
+    key: 'ambassador',
+    name: 'AMBASSADOR',
+    threshold: 'Dès 2 000 € cumulés',
+    icon: '🌟',
+    perks: ['3 points par euro dépensé', '200 pts bienvenue', 'Artshot ou Sélection offert', 'Livraison offerte sans minimum', 'Accès VIP galeries'],
+    progressText: null,
+    progressFill: 0,
+  },
+];
+
+function renderStatusCards() {
+  const activeIdx = personas[currentPersona].statusIdx;
+  const carousel = document.getElementById('status-carousel');
+  const dotsEl = document.getElementById('status-dots');
+
+  carousel.innerHTML = statusDefs.map((s, i) => {
+    const isActive = i === activeIdx;
+    const isLocked = i > activeIdx;
+    const badge = isActive ? 'ACQUIS' : (isLocked ? 'À DÉBLOQUER' : 'ACQUIS');
+    const perksHtml = s.perks.map(p => `
+      <div class="status-perk"><span class="status-perk-icon">·</span><span>${p}</span></div>
+    `).join('');
+    const progressHtml = (!isLocked && s.progressText) ? `
+      <div class="status-divider"></div>
+      <div class="status-progress-text">${s.progressText}</div>
+      <div class="status-progress-track"><div class="status-progress-fill" style="width:${s.progressFill}%"></div></div>
+    ` : '';
+    return `
+      <div class="status-card ${isLocked?'locked':''}" data-idx="${i}">
+        <div class="status-card-header">
+          <div class="status-icon-wrap"><span style="font-size:16px;">${isLocked?'🔒':s.icon}</span></div>
+          <div>
+            <div class="status-name">${s.name}</div>
+            <div class="status-threshold">${s.threshold}</div>
+          </div>
+          <span class="status-badge">${badge}</span>
+        </div>
+        <div class="status-divider"></div>
+        ${perksHtml}
+        ${progressHtml}
+      </div>`;
+  }).join('');
+
+  dotsEl.innerHTML = statusDefs.map((_, i) =>
+    `<div class="dot ${i===activeIdx?'active':''}"></div>`
+  ).join('');
+
+  // Scroll to active card
+  setTimeout(() => {
+    const active = carousel.querySelector(`[data-idx="${activeIdx}"]`);
+    if (active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  }, 50);
+}
+
+// ===== ORDERS FILTER =====
+function filterOrders(btn, brand) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.order-card').forEach(card => {
+    card.style.display = (brand === 'all' || card.dataset.brand === brand) ? 'block' : 'none';
+  });
+}
+
+// ===== COPY CODE =====
+function copyCode(el, code) {
+  navigator.clipboard.writeText(code).catch(() => {});
+  showToast('Code copié !');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ===== EXCHANGE POINTS =====
+function exchangePoints(btn, pts) {
+  showToast(`Échange de ${pts} pts effectué !`);
+}
+
+// ===== HISTORY MODAL =====
+function openHistModal() {
+  document.getElementById('hist-modal').classList.add('open');
+}
+function closeHistModal(e) {
+  document.getElementById('hist-modal').classList.remove('open');
+}
+
+// ===== INIT =====
+renderStatusCards();
+
+// Close persona dropdown on outside click
+document.addEventListener('click', () => {
+  const dd = document.getElementById('persona-dropdown');
+  const btn = document.getElementById('persona-btn');
+  if (dd) dd.classList.remove('open');
+  if (btn) btn.classList.remove('open');
+});
+</script>
+</body>
+</html>
