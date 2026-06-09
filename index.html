@@ -7,270 +7,285 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Arimo:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --navy:#283553;
   --beige:#F8F2DF;
   --yellow:#FFCE00;
   --grey:#E2E3DA;
+  --border:#DDDBD8;
+  --bg-light:#F5F4F2;
+  --text-dark:#1D1D1B;
+  --text-mid:#444440;
+  --text-muted:#888884;
   --white:#FFFFFF;
-  --text-sm:12px;
-  --text-md:14px;
-  --text-base:16px;
-  --text-lg:18px;
-  --text-xl:20px;
 }
 body{
-  background:#f0f0f0;
-  font-family:'Arimo',Arial,sans-serif;
+  background:#f0efed;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
   display:flex;
   justify-content:center;
-  min-height:100vh;
+  align-items:flex-start;
 }
-#app{
+
+/* ===== LAYOUT ===== */
+#shell{
+  display:flex;
   width:430px;
   min-height:100vh;
   background:#fff;
   position:relative;
-  overflow:hidden;
 }
-/* TOP BAR */
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:100;
+@media(min-width:900px){
+  #shell{
+    width:860px;
+  }
+}
+
+/* SIDEBAR */
+#sidebar{
+  width:215px;
+  flex-shrink:0;
   background:#fff;
-  border-bottom:1px solid var(--grey);
-  height:68px;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  padding:0 16px;
-}
-.burger-btn{
-  background:none;
-  border:none;
-  cursor:pointer;
-  padding:8px;
+  border-right:1px solid #ECEAE6;
   display:flex;
   flex-direction:column;
-  gap:4px;
+  height:100vh;
+  position:sticky;
+  top:0;
+  overflow-y:auto;
 }
-.burger-btn span{
-  display:block;
-  width:20px;
-  height:2px;
-  background:var(--navy);
-  border-radius:1px;
+/* Mobile: sidebar hidden, shown as overlay drawer */
+@media(max-width:899px){
+  #sidebar{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    z-index:200;
+    transform:translateX(-100%);
+    transition:transform .25s;
+    height:100%;
+  }
+  #sidebar.open{transform:translateX(0);}
+  #drawer-overlay{
+    display:block;
+  }
 }
-.logo{
-  height:35px;
-  object-fit:contain;
+@media(min-width:900px){
+  #sidebar{display:flex !important; transform:none !important;}
+  #drawer-overlay{display:none !important;}
+  .burger-btn{display:none !important;}
 }
-.logo-text{
-  font-family:'Libre Baskerville',serif;
-  font-weight:700;
-  color:var(--navy);
-  font-size:18px;
-  letter-spacing:1px;
-  display:flex;
-  align-items:center;
-  gap:0;
-}
-.logo-badge{
-  background:var(--navy);
-  color:#fff;
-  border-radius:50%;
-  width:22px;
-  height:22px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  font-weight:700;
-  margin-right:2px;
-}
-.topbar-right{display:flex;justify-content:flex-end;}
 
-/* PROGRESS BAR (fidélité only) */
-.progress-bar-section{
-  background:var(--beige);
-  border-bottom:1px solid var(--beige);
-  padding:12px 16px;
+#drawer-overlay{
   display:none;
-}
-.progress-bar-section.visible{display:block;}
-.pb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.pb-status-badge{
-  border:1px solid var(--navy);
-  color:var(--navy);
-  font-family:Arial,sans-serif;
-  font-weight:700;
-  font-size:14px;
-  padding:3px 8px;
-  border-radius:3px;
-  margin-right:8px;
-}
-.pb-label{color:var(--navy);font-size:14px;}
-.pb-points{font-family:Arial,sans-serif;font-weight:700;font-size:16px;color:var(--navy);}
-.pb-track{
-  background:var(--grey);
-  border-radius:2px;
-  height:4px;
-  width:100%;
-  position:relative;
-}
-.pb-fill{
-  background:var(--navy);
-  height:100%;
-  border-radius:2px;
-  transition:width .4s;
-}
-
-/* DRAWER */
-.drawer-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  z-index:200;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.35);
+  z-index:199;
   opacity:0;
   pointer-events:none;
   transition:opacity .25s;
 }
-.drawer-overlay.open{opacity:1;pointer-events:all;}
-.drawer{
-  position:fixed;
-  top:0;left:0;bottom:0;
-  width:260px;
-  background:#fff;
-  z-index:201;
-  transform:translateX(-100%);
-  transition:transform .25s;
-  display:flex;
-  flex-direction:column;
-  padding:0;
+#drawer-overlay.open{opacity:1;pointer-events:all;}
+
+/* SIDEBAR INNER */
+.sb-user{
+  display:flex;align-items:center;gap:8px;
+  padding:12px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
 }
-.drawer.open{transform:translateX(0);}
-.drawer-header{
-  background:var(--navy);
-  padding:24px 20px 20px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+.sb-avatar{
+  width:32px;height:32px;
+  border-radius:16px;
+  background:var(--bg-light);
+  border:1.6px solid var(--border);
+  flex-shrink:0;
 }
-.drawer-username{color:#fff;font-weight:700;font-size:16px;}
-.drawer-subtitle{color:rgba(255,255,255,.7);font-size:12px;}
-.drawer-nav{list-style:none;flex:1;overflow-y:auto;padding:8px 0;}
-.drawer-nav li a{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 20px;
-  color:var(--navy);
+.sb-name{font-size:14px;font-weight:700;color:#111;}
+.sb-email{font-size:12px;color:var(--text-muted);}
+
+.sb-status{
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+.sb-status-badge{
+  background:var(--bg-light);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:8px 10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.sb-status-name{font-size:16px;font-weight:700;color:#111;}
+.sb-status-pts{font-size:16px;color:var(--text-muted);}
+
+.sb-nav{
+  flex:1;
+  background:var(--bg-light);
+  display:flex;flex-direction:column;justify-content:space-between;
+  overflow-y:auto;
+}
+.sb-nav-links{display:flex;flex-direction:column;}
+.sb-link{
+  display:block;
+  padding:15px 24px 15px 26px;
+  font-size:16px;
+  color:var(--text-dark);
   text-decoration:none;
-  font-size:15px;
-  border-bottom:1px solid #f5f5f5;
-  transition:background .15s;
+  border-left:2px solid transparent;
+  cursor:pointer;
+  background:none;border-top:none;border-right:none;border-bottom:none;
+  text-align:left;width:100%;
+  font-family:Arial,sans-serif;
 }
-.drawer-nav li a:hover,.drawer-nav li a.active{background:var(--beige);}
-.drawer-nav li a .nav-icon{font-size:18px;width:22px;text-align:center;}
-.drawer-footer{padding:20px;border-top:1px solid var(--grey);}
-.btn-logout{
-  width:100%;padding:10px;
-  border:1px solid var(--navy);
-  background:#fff;color:var(--navy);
-  font-size:14px;cursor:pointer;
-  border-radius:2px;
+.sb-link:hover{background:rgba(0,0,0,.03);}
+.sb-link.active{border-left-color:var(--text-dark);font-weight:700;}
+.sb-sep{height:1px;background:var(--border);}
+
+.sb-bottom{padding:0 24px 16px;}
+.sb-deconnect{
+  font-size:16px;
+  color:var(--text-mid);
+  font-weight:700;
+  font-family:'Arimo',sans-serif;
+  background:none;border:none;cursor:pointer;
+  padding:16px 0;
+  border-bottom:1px solid var(--border);
+  width:100%;text-align:left;
+  display:block;
 }
+
+.sb-external{
+  border-top:1px solid var(--border);
+  padding:16px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.sb-ext-title{font-size:16px;font-weight:700;color:var(--text-muted);margin-bottom:4px;}
+.sb-ext-link{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:4px 0;
+  text-decoration:none;color:var(--text-dark);font-size:14px;
+}
+.sb-ext-icon{width:16px;height:16px;opacity:.5;}
+
+/* MAIN AREA */
+#main{
+  flex:1;
+  min-width:0;
+  display:flex;flex-direction:column;
+  min-height:100vh;
+}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  height:68px;
+  display:grid;
+  grid-template-columns:44px 1fr 80px;
+  align-items:center;
+  padding:0 16px;
+  gap:8px;
+}
+.burger-btn{
+  background:none;border:none;cursor:pointer;
+  padding:8px 4px;
+  display:flex;flex-direction:column;gap:4.5px;
+  justify-self:start;
+}
+.burger-btn span{display:block;width:18px;height:1.5px;background:var(--navy);border-radius:1px;}
+.logo-wrap{
+  display:flex;justify-content:center;align-items:center;
+}
+.logo-text{
+  font-family:'Libre Baskerville',serif;
+  font-weight:700;color:var(--navy);
+  font-size:17px;letter-spacing:2px;
+  display:flex;align-items:center;gap:0;
+}
+.logo-badge{
+  background:var(--navy);color:#fff;
+  border-radius:50%;width:22px;height:22px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;
+  margin-right:3px;
+}
+.topbar-right{display:flex;justify-content:flex-end;align-items:center;}
+
+/* PROGRESS BAR */
+.progress-bar-section{
+  background:var(--beige);
+  border-bottom:1px solid #e8e0cc;
+  padding:12px 16px;
+  display:none;
+}
+.progress-bar-section.visible{display:block;}
+.pb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.pb-left{display:flex;align-items:center;gap:8px;}
+.pb-badge{
+  border:1px solid var(--navy);color:var(--navy);
+  font-weight:700;font-size:13px;
+  padding:3px 8px;border-radius:3px;
+}
+.pb-label{font-size:14px;color:var(--navy);}
+.pb-pts{font-weight:700;font-size:15px;color:var(--navy);}
+.pb-track{background:var(--grey);border-radius:2px;height:4px;width:100%;}
+.pb-fill{background:var(--navy);height:100%;border-radius:2px;transition:width .4s;}
 
 /* SCREENS */
-.screen{display:none;overflow-y:auto;height:calc(100vh - 68px);}
+.screen{display:none;overflow-y:auto;flex:1;}
 .screen.active{display:block;}
+.screen-scroll{height:calc(100vh - 68px);overflow-y:auto;}
+.screen-scroll.with-pb{height:calc(100vh - 68px - 63px);}
 .section-content{padding:16px;}
 
-/* TITLE COMPONENT */
+/* SECTION TITLE */
 .section-title{
   border-left:2px solid var(--navy);
-  padding-left:8px;
-  margin-bottom:16px;
+  padding-left:8px;margin-bottom:16px;
 }
 .section-title h2{
-  font-family:'Libre Baskerville',serif;
-  font-weight:700;
-  font-size:20px;
-  color:var(--navy);
-  line-height:1;
+  font-family:'Libre Baskerville',serif;font-weight:700;
+  font-size:20px;color:var(--navy);line-height:1;
 }
-.section-title p{
-  font-size:12px;
-  color:var(--navy);
-  margin-top:4px;
-}
+.section-title p{font-size:12px;color:var(--navy);margin-top:4px;}
 
 /* BUTTONS */
 .btn-primary{
-  background:var(--navy);
-  color:#fff;
-  border:1px solid var(--navy);
-  padding:14px;
-  width:100%;
-  font-family:Arial,sans-serif;
-  font-weight:700;
-  font-size:16px;
-  cursor:pointer;
-  border-radius:2px;
-  text-align:center;
+  background:var(--navy);color:#fff;
+  border:1px solid var(--navy);padding:14px;
+  width:100%;font-family:Arial,sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;border-radius:2px;text-align:center;
 }
 .btn-secondary{
-  background:#fff;
-  color:var(--navy);
-  border:1px solid var(--navy);
-  padding:14px;
-  width:100%;
-  font-family:Arial,sans-serif;
-  font-size:15px;
-  cursor:pointer;
-  border-radius:2px;
+  background:#fff;color:var(--navy);
+  border:1px solid var(--navy);padding:13px;
+  width:100%;font-family:Arial,sans-serif;font-size:15px;
+  cursor:pointer;border-radius:2px;
 }
 
-/* ===== FIDÉLITÉ ===== */
-.fidelite-screen .screen-body{padding-bottom:32px;}
-
-/* Persona switcher in topbar */
-.persona-switcher{
-  position:relative;
-}
+/* ===== PERSONA SWITCHER ===== */
+.persona-switcher{position:relative;}
 .persona-btn{
-  background:none;
-  border:1px solid var(--navy);
-  color:var(--navy);
-  font-family:Arial,sans-serif;
-  font-weight:700;
-  font-size:11px;
-  padding:4px 8px;
-  border-radius:3px;
-  cursor:pointer;
-  display:flex;align-items:center;gap:4px;
+  background:none;border:1px solid var(--navy);color:var(--navy);
+  font-family:Arial,sans-serif;font-weight:700;font-size:11px;
+  padding:4px 8px;border-radius:3px;cursor:pointer;
+  display:flex;align-items:center;gap:4px;white-space:nowrap;
 }
-.persona-btn svg{transition:transform .2s;}
+.persona-btn svg{transition:transform .2s;flex-shrink:0;}
 .persona-btn.open svg{transform:rotate(180deg);}
 .persona-dropdown{
-  position:absolute;
-  top:calc(100% + 4px);
-  right:0;
-  background:#fff;
-  border:1px solid var(--navy);
-  border-radius:4px;
-  overflow:hidden;
-  z-index:150;
-  min-width:130px;
-  display:none;
+  position:absolute;top:calc(100% + 4px);right:0;
+  background:#fff;border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;z-index:150;
+  min-width:140px;display:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
 .persona-dropdown.open{display:block;}
 .persona-option{
-  padding:10px 14px;
-  font-size:13px;
-  color:var(--navy);
-  cursor:pointer;
-  border-bottom:1px solid var(--grey);
+  padding:10px 14px;font-size:13px;color:var(--text-dark);
+  cursor:pointer;border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:8px;
 }
 .persona-option:last-child{border-bottom:none;}
@@ -278,1174 +293,1093 @@ body{
 .persona-option.active{background:var(--beige);font-weight:700;}
 .persona-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 
-/* Status cards horizontal scroll */
+/* ===== STATUS CARDS ===== */
 .status-carousel{
-  overflow-x:auto;
-  display:flex;
-  gap:12px;
-  padding-bottom:12px;
-  scrollbar-width:none;
+  overflow-x:auto;display:flex;gap:12px;
+  padding-bottom:12px;scrollbar-width:none;
 }
 .status-carousel::-webkit-scrollbar{display:none;}
 .status-card{
-  flex-shrink:0;
-  width:270px;
-  border:1px solid var(--navy);
-  border-radius:8px;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+  flex-shrink:0;width:270px;
+  border:1px solid var(--navy);border-radius:8px;
+  padding:12px;display:flex;flex-direction:column;gap:8px;
   background:var(--beige);
-  transition:opacity .3s;
 }
 .status-card.locked{background:#fff;opacity:.65;}
 .status-card-header{display:flex;align-items:center;gap:8px;}
 .status-icon-wrap{
-  width:32px;height:32px;
-  border:1.2px solid var(--navy);
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border:1.2px solid var(--navy);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
-.status-name{
-  font-weight:700;
-  font-size:16px;
-  color:var(--navy);
-}
+.status-name{font-weight:700;font-size:16px;color:var(--navy);}
 .status-threshold{font-size:10px;color:var(--navy);}
 .status-badge{
-  margin-left:auto;
-  border:1px solid var(--navy);
-  color:var(--navy);
-  font-size:10px;
-  padding:2px 5px;
-  border-radius:4px;
-  font-family:Arial,sans-serif;
-  white-space:nowrap;
+  margin-left:auto;border:1px solid var(--navy);color:var(--navy);
+  font-size:9px;padding:2px 5px;border-radius:4px;
+  font-family:Arial,sans-serif;white-space:nowrap;
 }
 .status-divider{height:1px;background:var(--navy);width:100%;}
-.status-perk{
-  display:flex;align-items:center;gap:8px;
-  font-size:14px;color:var(--navy);
-}
-.status-perk-icon{width:20px;height:20px;flex-shrink:0;font-size:16px;text-align:center;}
+.status-perk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--navy);}
+.status-perk-icon{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .status-progress-text{font-size:10px;color:var(--navy);}
-.status-progress-track{
-  background:var(--grey);
-  border-radius:1.5px;
-  height:3px;
-  margin-top:4px;
-  position:relative;
-}
-.status-progress-fill{
-  background:var(--navy);
-  height:100%;
-  border-radius:1.5px;
-  transition:width .4s;
-}
-
-/* Dots */
-.dots{display:flex;justify-content:center;gap:6px;margin-top:12px;}
+.status-progress-track{background:var(--grey);border-radius:2px;height:3px;margin-top:4px;}
+.status-progress-fill{background:var(--navy);height:100%;border-radius:2px;transition:width .4s;}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:8px;}
 .dot{width:6px;height:6px;border-radius:3px;background:var(--beige);}
 .dot.active{width:20px;background:var(--navy);}
 
-/* Gift cards (récompenses) */
+/* ===== GIFT CARDS (récompenses) ===== */
 .gift-card{
-  background:var(--beige);
-  border-left:2px solid var(--navy);
-  border-radius:0 8px 8px 0;
-  padding:16px 16px 16px 18px;
-  margin-bottom:8px;
+  background:var(--beige);border-left:2px solid var(--navy);
+  border-radius:0 8px 8px 0;padding:16px 16px 16px 18px;margin-bottom:8px;
 }
 .gift-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.gift-card-label{font-size:14px;color:var(--navy);font-family:Arial,sans-serif;}
-.gift-card-amount{font-family:Arial,sans-serif;font-weight:700;font-size:18px;color:var(--navy);}
+.gift-card-label{font-size:13px;color:var(--navy);}
+.gift-card-amount{font-weight:700;font-size:18px;color:var(--navy);}
 .gift-card-info{font-size:10px;color:var(--navy);}
-.gift-active-badge{
-  background:var(--navy);
-  color:#fff;
-  font-size:12px;
-  padding:2px 12px;
-  border-radius:24px;
+.active-badge{
+  background:var(--navy);color:#fff;font-size:11px;
+  padding:2px 10px;border-radius:24px;
   display:flex;align-items:center;gap:4px;
 }
-.gift-active-badge::before{content:'';width:4px;height:4px;background:#fff;border-radius:50%;}
-.gift-divider{height:1px;background:var(--grey);margin:10px 0;}
+.active-badge::before{content:'';width:4px;height:4px;background:#fff;border-radius:50%;}
+.gift-divider{height:1px;background:var(--border);margin:10px 0;}
 .code-row{
-  border:1px dashed var(--navy);
-  background:#fff;
-  border-radius:4px;
-  padding:9px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  cursor:pointer;
+  border:1px dashed var(--navy);background:#fff;
+  border-radius:4px;padding:9px;
+  display:flex;align-items:center;gap:8px;cursor:pointer;
 }
-.code-text{flex:1;font-family:Arial,sans-serif;font-size:16px;color:var(--navy);}
+.code-text{flex:1;font-size:15px;color:var(--navy);}
 .copy-btn{
-  background:var(--navy);
-  color:#fff;
-  border:none;
-  border-radius:4px;
-  padding:8px 12px;
-  font-family:Arial,sans-serif;
-  font-weight:700;
-  font-size:14px;
-  cursor:pointer;
-  white-space:nowrap;
-  display:flex;align-items:center;gap:6px;
+  background:var(--navy);color:#fff;border:none;
+  border-radius:4px;padding:7px 10px;
+  font-weight:700;font-size:13px;cursor:pointer;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
 }
 .gift-expiry{font-size:10px;color:var(--navy);margin-top:4px;}
 
-/* Points store */
-.points-carousel{
-  overflow-x:auto;
-  display:flex;
-  gap:12px;
-  padding-bottom:4px;
-  scrollbar-width:none;
-}
+/* ===== POINTS STORE ===== */
+.points-carousel{overflow-x:auto;display:flex;gap:12px;padding-bottom:4px;scrollbar-width:none;}
 .points-carousel::-webkit-scrollbar{display:none;}
 .point-item{
-  flex-shrink:0;
-  width:145px;
-  border:1px solid var(--navy);
-  background:var(--beige);
-  border-radius:6px;
-  padding:14px;
+  flex-shrink:0;width:140px;
+  border:1px solid var(--navy);background:var(--beige);
+  border-radius:6px;padding:14px;
   display:flex;flex-direction:column;gap:8px;
 }
 .point-item.unavailable{opacity:.5;}
 .point-item-name{font-size:14px;color:var(--navy);}
 .point-item-pts{font-size:13px;color:var(--navy);}
-.point-exchange-btn{
-  background:var(--navy);
-  color:#fff;
-  border:none;
-  border-radius:2px;
-  padding:7px;
-  font-family:Arial,sans-serif;
-  font-weight:700;
-  font-size:14px;
-  cursor:pointer;
-  width:100%;
+.point-btn{
+  background:var(--navy);color:#fff;border:none;
+  border-radius:2px;padding:7px;
+  font-weight:700;font-size:13px;cursor:pointer;width:100%;
 }
 
-/* History button */
+/* ===== HISTORY BTN ===== */
 .history-btn{
-  background:#fff;
-  border:1px solid var(--navy);
-  color:var(--navy);
-  width:100%;
-  padding:16px;
-  border-radius:4px;
+  background:#fff;border:1px solid var(--navy);color:var(--navy);
+  width:100%;padding:15px;border-radius:4px;
   display:flex;align-items:center;justify-content:center;gap:12px;
-  cursor:pointer;
-  font-family:'Arimo',sans-serif;
-  font-weight:700;
-  font-size:16px;
+  cursor:pointer;font-family:'Arimo',sans-serif;font-weight:700;font-size:15px;
 }
 
-/* ===== COMMANDES ===== */
-.tab-filter{
-  display:flex;gap:8px;margin-bottom:16px;
-}
+/* ===== ORDERS ===== */
+.tab-filter{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
 .tab-btn{
-  border:1px solid var(--navy);
-  background:#fff;
-  color:var(--navy);
-  padding:6px 14px;
-  border-radius:4px;
-  font-size:14px;
-  cursor:pointer;
+  border:1px solid var(--navy);background:#fff;color:var(--navy);
+  padding:6px 14px;border-radius:4px;font-size:14px;cursor:pointer;
 }
-.tab-btn.active{
-  background:var(--navy);
-  color:#fff;
-}
-.order-card{
-  border:1px solid var(--grey);
-  border-radius:4px;
-  padding:16px;
-  margin-bottom:12px;
-}
+.tab-btn.active{background:var(--navy);color:#fff;}
+.order-card{border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:12px;}
 .order-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-.order-thumb{
-  width:90px;height:70px;
-  background:var(--grey);
-  border-radius:4px;
-  flex-shrink:0;
-  object-fit:cover;
-}
+.order-thumb{width:90px;height:70px;background:var(--grey);border-radius:4px;flex-shrink:0;object-fit:cover;}
 .order-meta{flex:1;}
-.order-brand-icon{
-  width:24px;height:24px;
-  border-radius:50%;
-  margin-bottom:4px;
-  display:inline-block;
+.brand-pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:50%;
+  font-size:9px;font-weight:700;margin-bottom:4px;
 }
-.brand-yk{background:var(--yellow);}
-.brand-lk{background:var(--navy);}
-.order-num{font-size:14px;color:var(--navy);margin-bottom:4px;}
-.order-total{font-size:16px;color:var(--navy);font-weight:700;}
-.order-count{font-size:11px;color:#666;margin-top:2px;}
+.brand-yk{background:var(--yellow);color:var(--navy);}
+.brand-lk{background:var(--navy);color:#fff;}
+.order-num{font-size:13px;color:var(--navy);margin-bottom:3px;}
+.order-total{font-size:15px;color:var(--navy);font-weight:700;}
+.order-count{font-size:11px;color:#777;margin-top:2px;}
 .order-status{
   display:inline-flex;align-items:center;gap:6px;
-  border:1px solid var(--grey);
-  border-radius:4px;
-  padding:6px 12px;
-  font-size:14px;
-  color:var(--navy);
-  margin-top:8px;
+  border:1px solid var(--border);border-radius:4px;
+  padding:6px 12px;font-size:13px;color:var(--navy);margin-top:8px;
 }
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
+.status-dot-delivery{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
 .order-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
 .order-btn{
-  border:1px solid var(--navy);
-  background:#fff;
-  color:var(--navy);
-  padding:12px;
-  border-radius:2px;
-  font-size:14px;
-  cursor:pointer;
-  text-align:center;
+  border:1px solid var(--navy);background:#fff;color:var(--navy);
+  padding:11px;border-radius:2px;font-size:14px;cursor:pointer;text-align:center;
 }
-.order-btn.primary-action{background:var(--navy);color:#fff;}
+.order-btn.primary{background:var(--navy);color:#fff;}
 
 /* ===== CERTIFICATS ===== */
-.cert-card{
-  border:1px solid var(--grey);
-  border-radius:4px;
-  padding:16px;
-  margin-bottom:12px;
-}
+.cert-card{border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:12px;}
 .cert-info{display:flex;gap:12px;margin-bottom:12px;}
-.cert-thumb{
-  width:90px;height:66px;
-  background:var(--grey);
-  border-radius:4px;
-  flex-shrink:0;
-}
-.cert-details{flex:1;}
-.cert-title{font-size:16px;color:var(--navy);font-weight:700;margin-bottom:2px;}
-.cert-artist{font-size:14px;color:var(--navy);margin-bottom:6px;}
-.cert-edition-row{display:flex;align-items:center;gap:8px;}
-.cert-format{
-  display:flex;align-items:center;gap:6px;
-  font-size:11px;color:var(--navy);
-}
-.cert-format-dot{width:22px;height:22px;border-radius:50%;background:var(--grey);flex-shrink:0;}
-.cert-edition-num{font-size:16px;font-weight:700;color:var(--navy);text-align:right;}
-.cert-edition-label{font-size:14px;color:var(--navy);text-align:right;}
+.cert-thumb{width:90px;height:66px;background:var(--grey);border-radius:4px;flex-shrink:0;}
+.cert-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.cert-artist{font-size:13px;color:var(--navy);margin-bottom:6px;}
+.cert-meta{display:flex;align-items:center;gap:8px;}
+.cert-format{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--navy);}
+.cert-format-circle{width:22px;height:22px;border-radius:50%;background:var(--border);flex-shrink:0;}
+.cert-edition{text-align:right;margin-left:auto;}
+.cert-edition-label{font-size:12px;color:var(--navy);}
+.cert-edition-num{font-size:15px;font-weight:700;color:var(--navy);}
 
 /* ===== WISHLIST ===== */
-.wishlist-subtitle{font-size:14px;color:var(--navy);margin-bottom:12px;}
-.wishlist-share{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
-.wishlist-share span{font-size:16px;color:var(--navy);}
-.share-icons{display:flex;gap:10px;}
-.share-icon{width:18px;height:18px;background:var(--navy);border-radius:2px;opacity:.7;}
 .art-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.art-card{border:1px solid var(--grey);border-radius:4px;overflow:hidden;}
-.art-thumb{
-  width:100%;
-  aspect-ratio:3/4;
-  background:var(--grey);
-  position:relative;
-}
-.art-thumb-img{width:100%;height:100%;object-fit:cover;}
-.art-card-body{padding:8px 10px;}
-.art-title{font-size:14px;color:var(--navy);font-weight:700;margin-bottom:2px;}
-.art-artist{font-size:12px;color:#555;}
+.art-card{border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.art-thumb{width:100%;aspect-ratio:3/4;background:var(--grey);position:relative;}
 .art-heart{
-  position:absolute;right:8px;bottom:8px;
-  background:#fff;border-radius:50%;
-  width:28px;height:28px;
+  position:absolute;right:7px;bottom:7px;
+  background:#fff;border-radius:50%;width:26px;height:26px;
   display:flex;align-items:center;justify-content:center;
-  font-size:14px;cursor:pointer;
-  box-shadow:0 1px 4px rgba(0,0,0,.15);
+  box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer;
 }
+.art-card-body{padding:8px 10px;}
+.art-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:1px;}
+.art-artist{font-size:11px;color:#666;}
 
-/* ===== ARTISTES & THÈMES ===== */
+/* ===== ARTISTES ===== */
 .artist-section{margin-bottom:24px;}
 .artist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .artist-name-row{display:flex;align-items:center;gap:10px;}
 .artist-avatar{width:42px;height:42px;border-radius:50%;background:var(--grey);flex-shrink:0;}
-.artist-name{font-size:16px;font-weight:700;color:var(--navy);}
-.artist-tag{font-size:12px;color:var(--navy);}
-.art-h-carousel{
-  overflow-x:auto;
-  display:flex;gap:10px;
-  padding-bottom:8px;
-  scrollbar-width:none;
-}
+.artist-name{font-size:15px;font-weight:700;color:var(--navy);}
+.artist-tag{font-size:11px;color:var(--navy);}
+.art-h-carousel{overflow-x:auto;display:flex;gap:10px;padding-bottom:8px;scrollbar-width:none;}
 .art-h-carousel::-webkit-scrollbar{display:none;}
-.art-h-card{
-  flex-shrink:0;width:200px;
-  border:1px solid var(--grey);
-  border-radius:4px;overflow:hidden;
-}
-.art-h-thumb{width:100%;height:150px;background:var(--grey);}
-.art-h-body{padding:8px 10px;}
+.art-h-card{flex-shrink:0;width:190px;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.art-h-thumb{width:100%;height:145px;background:var(--grey);}
+.art-h-body{padding:7px 9px;}
 
-/* ===== CARTE CADEAUX ===== */
+/* ===== CARTES CADEAUX ===== */
 .gift-page-card{
-  background:var(--beige);
-  border-left:2px solid var(--navy);
-  border-radius:0 8px 8px 0;
-  padding:16px 16px 16px 18px;
-  margin-bottom:12px;
+  background:var(--beige);border-left:2px solid var(--navy);
+  border-radius:0 8px 8px 0;padding:16px 16px 16px 18px;margin-bottom:12px;
 }
 .gift-page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-.gift-page-name{font-family:'Libre Baskerville',serif;font-weight:700;font-size:18px;color:var(--navy);}
-.gift-page-amount{font-family:Arial,sans-serif;font-weight:700;font-size:24px;color:var(--navy);}
-.gift-page-expiry{font-size:11px;color:var(--navy);margin-top:4px;}
-
-/* ===== ARTFINDER ===== */
-.artfinder-subtitle{font-size:14px;color:var(--navy);margin-bottom:16px;line-height:1.4;}
+.gift-page-brand{font-family:'Libre Baskerville',serif;font-weight:700;font-size:17px;color:var(--navy);}
+.gift-page-amount{font-weight:700;font-size:22px;color:var(--navy);}
 
 /* ===== INFORMATIONS ===== */
-.info-block{border:1px solid var(--grey);border-radius:4px;margin-bottom:16px;overflow:hidden;}
+.info-block{border:1px solid var(--border);border-radius:4px;margin-bottom:16px;overflow:hidden;}
 .info-row{
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 12px;
-  border-bottom:1px solid var(--grey);
+  padding:9px 12px;border-bottom:1px solid var(--border);
 }
 .info-row:last-child{border-bottom:none;}
-.info-key{font-size:12px;color:var(--navy);font-family:Arial,sans-serif;text-transform:uppercase;}
-.info-value{font-size:16px;color:var(--navy);text-align:right;}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--grey);}
+.info-key{font-size:12px;color:var(--navy);text-transform:uppercase;}
+.info-value{font-size:15px;color:var(--navy);text-align:right;max-width:200px;}
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 12px;border-bottom:1px solid var(--border);
+}
 .toggle-row:last-child{border-bottom:none;}
-.toggle-label{font-size:16px;color:var(--navy);}
-.toggle{
-  width:48px;height:27px;
-  border-radius:14px;
-  background:var(--grey);
-  position:relative;cursor:pointer;
-  transition:background .2s;
-  flex-shrink:0;
-}
+.toggle-label{font-size:15px;color:var(--navy);}
+.toggle{width:46px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
 .toggle.on{background:var(--navy);}
-.toggle-thumb{
-  position:absolute;
-  top:3px;left:3px;
-  width:21px;height:21px;
-  border-radius:50%;
-  background:#fff;
-  transition:transform .2s;
-  box-shadow:0 1px 3px rgba(0,0,0,.2);
-}
-.toggle.on .toggle-thumb{transform:translateX(21px);}
-
-.loyalty-mini{
-  border:1px solid var(--grey);
-  border-radius:4px;
-  padding:16px;
-  display:flex;align-items:center;gap:12px;
-}
-.loyalty-mini-icon{
-  width:32px;height:32px;
-  border-radius:50%;
-  border:1px solid var(--navy);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on .toggle-thumb{transform:translateX(20px);}
+.loyalty-mini{border:1px solid var(--border);border-radius:4px;padding:15px;display:flex;align-items:center;gap:12px;}
+.loyalty-mini-icon{width:32px;height:32px;border-radius:50%;border:1px solid var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .loyalty-mini-info{flex:1;}
-.loyalty-mini-status{font-size:18px;font-weight:700;color:var(--navy);}
+.loyalty-mini-status{font-size:17px;font-weight:700;color:var(--navy);}
 .loyalty-mini-msg{font-size:12px;color:var(--navy);line-height:1.3;margin-top:2px;}
-.loyalty-mini-pts{font-weight:700;font-size:18px;color:var(--navy);}
+.loyalty-mini-pts{font-weight:700;font-size:17px;color:var(--navy);text-align:right;}
 
-/* TOAST */
+/* ===== TOAST ===== */
 .toast{
-  position:fixed;
-  bottom:80px;
-  left:50%;
+  position:fixed;bottom:24px;left:50%;
   transform:translateX(-50%) translateY(20px);
-  background:var(--navy);
-  color:#fff;
-  padding:10px 20px;
-  border-radius:20px;
-  font-size:14px;
-  opacity:0;
-  transition:all .3s;
-  pointer-events:none;
-  white-space:nowrap;
-  z-index:500;
+  background:var(--navy);color:#fff;
+  padding:10px 20px;border-radius:20px;
+  font-size:14px;opacity:0;transition:all .3s;
+  pointer-events:none;white-space:nowrap;z-index:600;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* MODAL historique */
+/* ===== MODALS (bottom sheet) ===== */
 .modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.5);
-  z-index:300;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:400;display:none;align-items:flex-end;justify-content:center;
 }
 .modal-overlay.open{display:flex;}
 .modal-sheet{
-  background:#fff;
-  border-radius:12px 12px 0 0;
-  width:430px;
-  max-height:80vh;
-  overflow-y:auto;
-  padding:20px 16px 32px;
+  background:#fff;border-radius:21px 21px 0 0;
+  width:430px;max-height:90vh;overflow-y:auto;
+  padding:16px 16px 32px;
 }
-.modal-handle{
-  width:48px;height:4px;
-  background:var(--grey);border-radius:2px;
-  margin:0 auto 20px;
+@media(min-width:900px){
+  .modal-overlay{align-items:center;}
+  .modal-sheet{border-radius:12px;max-width:430px;width:100%;max-height:85vh;}
 }
+.modal-handle{width:57px;height:4px;background:#D9D9D9;border-radius:32px;margin:0 auto 16px;}
+.modal-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.modal-title{font-family:Arial,sans-serif;font-weight:700;font-size:18px;color:#111;}
+.modal-close-btn{
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid #888884;background:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.modal-divider{height:1px;background:rgba(0,0,0,.1);margin:12px 0;}
+
+/* Edit info form */
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.form-label{font-size:14px;color:var(--text-muted);}
+.form-input{
+  border:1px solid var(--border);border-radius:4px;
+  padding:12px;font-size:16px;font-family:Arial,sans-serif;
+  color:#000;width:100%;
+}
+.form-input:disabled{opacity:.5;background:#fff;}
+.form-input:focus{outline:2px solid var(--navy);border-color:var(--navy);}
+.galerie-block{border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.galerie-current{background:var(--bg-light);padding:12px;}
+.galerie-current-name{font-size:16px;color:#000;font-weight:700;}
+.galerie-current-label{font-size:14px;color:var(--text-muted);margin-top:2px;}
+.galerie-select-btn{
+  border-top:1px solid var(--border);background:#fff;
+  padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:16px;color:#000;cursor:pointer;border-bottom:none;border-left:none;border-right:none;
+  width:100%;font-family:Arial,sans-serif;
+}
+
+/* Tracking modal */
+.track-step{
+  display:flex;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.track-step:last-child{border-bottom:none;}
+.track-dot-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.track-dot{width:10px;height:10px;border-radius:50%;background:var(--navy);flex-shrink:0;}
+.track-dot.pending{background:var(--border);}
+.track-line{width:2px;flex:1;background:var(--border);border-radius:1px;}
+.track-line.done{background:var(--navy);}
+.track-info{}
+.track-label{font-size:14px;font-weight:700;color:var(--navy);}
+.track-label.pending{color:var(--border);}
+.track-date{font-size:12px;color:var(--text-muted);}
+
+/* History modal */
 .hist-item{
-  display:flex;justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid var(--grey);
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);
   font-size:14px;color:var(--navy);
 }
+.hist-item:last-child{border-bottom:none;}
 .hist-pts{font-weight:700;}
-.hist-pts.gain{color:#2a7a2a;}
-.hist-pts.use{color:#c0392b;}
+.hist-pts.gain{color:#2a6e2a;}
+.hist-pts.use{color:#b03020;}
 
-/* Scrollbar screen */
-.screen::-webkit-scrollbar{width:3px;}
-.screen::-webkit-scrollbar-thumb{background:var(--grey);border-radius:2px;}
+/* SVG icons shared */
+svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 </style>
 </head>
 <body>
-<div id="app">
+<div id="shell">
 
-  <!-- TOP BAR -->
-  <header class="topbar" id="topbar">
-    <button class="burger-btn" onclick="toggleDrawer()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="logo-text">
-      <span class="logo-badge">MY</span>KORNER
-    </div>
-    <div class="topbar-right" id="topbar-right"></div>
-  </header>
-
-  <!-- PROGRESS BAR (fidélité) -->
-  <div class="progress-bar-section" id="progress-bar">
-    <div class="pb-row">
-      <div style="display:flex;align-items:center;">
-        <span class="pb-status-badge" id="pb-status-badge">EXPLORER</span>
-        <span class="pb-label" id="pb-label">250 € → Art Lover</span>
-      </div>
-      <span class="pb-points" id="pb-points">125 pts</span>
-    </div>
-    <div class="pb-track"><div class="pb-fill" id="pb-fill" style="width:25%"></div></div>
-  </div>
-
-  <!-- DRAWER -->
-  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
-  <nav class="drawer" id="drawer">
-    <div class="drawer-header">
-      <div class="drawer-username">Camille Dulèvre</div>
-      <div class="drawer-subtitle">camille.d@example.fr</div>
-    </div>
-    <ul class="drawer-nav" id="drawer-nav">
-      <li><a href="#" onclick="navigate('commandes')" data-screen="commandes"><span class="nav-icon">📦</span>Mes commandes</a></li>
-      <li><a href="#" onclick="navigate('cartes')" data-screen="cartes"><span class="nav-icon">🎁</span>Mes cartes cadeaux</a></li>
-      <li><a href="#" onclick="navigate('certificats')" data-screen="certificats"><span class="nav-icon">🏅</span>Mes certificats</a></li>
-      <li><a href="#" onclick="navigate('fidelite')" data-screen="fidelite"><span class="nav-icon">⭐</span>Mon compte fidélité</a></li>
-      <li><a href="#" onclick="navigate('wishlist')" data-screen="wishlist"><span class="nav-icon">❤️</span>Ma wishlist</a></li>
-      <li><a href="#" onclick="navigate('artistes')" data-screen="artistes"><span class="nav-icon">🎨</span>Artistes & thèmes</a></li>
-      <li><a href="#" onclick="navigate('artfinder')" data-screen="artfinder"><span class="nav-icon">🔍</span>ArtFinder</a></li>
-      <li><a href="#" onclick="navigate('infos')" data-screen="infos"><span class="nav-icon">👤</span>Mes informations</a></li>
-    </ul>
-    <div class="drawer-footer">
-      <button class="btn-logout">Se déconnecter</button>
-    </div>
-  </nav>
-
-  <!-- ===== SCREEN: COMMANDES ===== -->
-  <div class="screen active" id="screen-commandes">
-    <div class="section-content">
-      <div class="section-title"><h2>Mes commandes</h2><p>Historique de vos achats</p></div>
-      <div class="tab-filter">
-        <button class="tab-btn active" onclick="filterOrders(this,'all')">Toutes</button>
-        <button class="tab-btn" onclick="filterOrders(this,'yk')">YellowKorner</button>
-        <button class="tab-btn" onclick="filterOrders(this,'lk')">LabKorner</button>
-      </div>
-      <div id="orders-list">
-        <div class="order-card" data-brand="lk">
-          <div class="order-header">
-            <div class="order-thumb" style="background:linear-gradient(135deg,#c8b89a,#a89070);"></div>
-            <div class="order-meta">
-              <span class="order-brand-icon brand-lk" style="display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;">LK</span>
-              <div class="order-num">Commande #LK-24-0021</div>
-              <div class="order-total">4 524,42 €</div>
-              <div class="order-count">Nombre de produits : 3</div>
-            </div>
-          </div>
-          <div class="order-status"><span class="status-dot"></span>En cours de livraison</div>
-          <div class="order-actions">
-            <button class="order-btn primary-action">Voir le détail</button>
-            <button class="order-btn">Suivre ma commande</button>
-          </div>
-        </div>
-        <div class="order-card" data-brand="yk">
-          <div class="order-header">
-            <div class="order-thumb" style="background:linear-gradient(135deg,#e8d090,#c8a030);"></div>
-            <div class="order-meta">
-              <span class="order-brand-icon brand-yk" style="display:inline-flex;align-items:center;justify-content:center;color:var(--navy);font-size:10px;font-weight:700;">YK</span>
-              <div class="order-num">Commande Z220425 1552686</div>
-              <div class="order-total">1 240,00 €</div>
-              <div class="order-count">Nombre de produits : 2</div>
-            </div>
-          </div>
-          <div class="order-status"><span class="status-dot"></span>En cours de livraison</div>
-          <div class="order-actions">
-            <button class="order-btn primary-action">Voir le détail</button>
-            <button class="order-btn">Suivre ma commande</button>
-          </div>
-        </div>
-        <div class="order-card" data-brand="yk">
-          <div class="order-header">
-            <div class="order-thumb" style="background:linear-gradient(135deg,#b0c8d0,#7090a8);"></div>
-            <div class="order-meta">
-              <span class="order-brand-icon brand-yk" style="display:inline-flex;align-items:center;justify-content:center;color:var(--navy);font-size:10px;font-weight:700;">YK</span>
-              <div class="order-num">Commande Z211203 9874521</div>
-              <div class="order-total">680,00 €</div>
-              <div class="order-count">Nombre de produits : 1</div>
-            </div>
-          </div>
-          <div class="order-status" style="border-color:var(--navy);"><span class="status-dot" style="background:var(--navy);"></span>Livré</div>
-          <div class="order-actions">
-            <button class="order-btn primary-action">Voir le détail</button>
-          </div>
-        </div>
+  <!-- ===== SIDEBAR ===== -->
+  <div id="drawer-overlay" onclick="closeDrawer()"></div>
+  <aside id="sidebar">
+    <!-- User -->
+    <div class="sb-user">
+      <div class="sb-avatar"></div>
+      <div>
+        <div class="sb-name">Camille D.</div>
+        <div class="sb-email">camille.d@example.fr</div>
       </div>
     </div>
-  </div>
-
-  <!-- ===== SCREEN: CARTES CADEAUX ===== -->
-  <div class="screen" id="screen-cartes">
-    <div class="section-content">
-      <div class="section-title"><h2>Mes cartes cadeaux</h2><p>Vos bons d'achat disponibles</p></div>
-      <div class="gift-page-card">
-        <div class="gift-page-header">
-          <div>
-            <div class="gift-page-name">YellowKorner</div>
-            <div style="font-size:12px;color:var(--navy);margin-top:2px;">Carte cadeau</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="gift-page-amount">150 €</div>
-            <span class="gift-active-badge">Active</span>
-          </div>
-        </div>
-        <div style="height:1px;background:var(--grey);margin:10px 0;"></div>
-        <div class="code-row" onclick="copyCode(this,'YK-GIFT-7823-4490')">
-          <span class="code-text">YK-GIFT-7823-4490</span>
-          <button class="copy-btn">📋 Copier</button>
-        </div>
-        <div class="gift-page-expiry">Expire le 15 décembre 2025</div>
-      </div>
-      <div class="gift-page-card" style="border-left-color:var(--navy);">
-        <div class="gift-page-header">
-          <div>
-            <div class="gift-page-name" style="color:var(--navy);">LabKorner</div>
-            <div style="font-size:12px;color:var(--navy);margin-top:2px;">Carte cadeau</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="gift-page-amount">75 €</div>
-            <span class="gift-active-badge">Active</span>
-          </div>
-        </div>
-        <div style="height:1px;background:var(--grey);margin:10px 0;"></div>
-        <div class="code-row" onclick="copyCode(this,'LK-GIFT-3341-8872')">
-          <span class="code-text">LK-GIFT-3341-8872</span>
-          <button class="copy-btn">📋 Copier</button>
-        </div>
-        <div class="gift-page-expiry">Expire le 30 juin 2026</div>
+    <!-- Status -->
+    <div class="sb-status">
+      <div class="sb-status-badge">
+        <span class="sb-status-name" id="sb-status-name">Art Lover</span>
+        <span class="sb-status-pts" id="sb-status-pts">695 pts</span>
       </div>
     </div>
-  </div>
+    <!-- Nav -->
+    <nav class="sb-nav">
+      <div class="sb-nav-links" id="sb-nav-links">
+        <button class="sb-link active" data-screen="commandes" onclick="navigate('commandes')">Mes commandes</button>
+        <button class="sb-link" data-screen="cartes" onclick="navigate('cartes')">Mes cartes cadeaux</button>
+        <div class="sb-sep"></div>
+        <button class="sb-link" data-screen="certificats" onclick="navigate('certificats')">Mes certificats</button>
+        <button class="sb-link" data-screen="fidelite" onclick="navigate('fidelite')">Mon compte fidélité</button>
+        <div class="sb-sep"></div>
+        <button class="sb-link" data-screen="wishlist" onclick="navigate('wishlist')">Ma wishlist</button>
+        <button class="sb-link" data-screen="artistes" onclick="navigate('artistes')">Artistes et thèmes</button>
+        <button class="sb-link" data-screen="artfinder" onclick="navigate('artfinder')">ArtFinder</button>
+        <div class="sb-sep"></div>
+        <button class="sb-link" data-screen="infos" onclick="navigate('infos')">Mes informations</button>
+      </div>
+      <div class="sb-bottom">
+        <button class="sb-deconnect">Déconnexion</button>
+      </div>
+    </nav>
+    <!-- External links -->
+    <div class="sb-external">
+      <div class="sb-ext-title">Visiter les sites</div>
+      <a href="https://www.yellowkorner.com" target="_blank" class="sb-ext-link">
+        <span style="font-family:'Libre Baskerville',serif;font-weight:700;font-size:13px;letter-spacing:1px;color:var(--navy);">YellowKorner</span>
+        <svg class="sb-ext-icon" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+      <a href="https://fr.labkorner.com" target="_blank" class="sb-ext-link">
+        <span style="font-family:'Libre Baskerville',serif;font-weight:700;font-size:13px;letter-spacing:1px;color:var(--navy);">LabKorner</span>
+        <svg class="sb-ext-icon" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+  </aside>
 
-  <!-- ===== SCREEN: CERTIFICATS ===== -->
-  <div class="screen" id="screen-certificats">
-    <div class="section-content">
-      <div class="section-title"><h2>Mes certificats</h2><p>Authenticité de vos œuvres</p></div>
-      <div class="cert-card">
-        <div class="cert-info">
-          <div class="cert-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div>
-          <div class="cert-details">
-            <div class="cert-title">Tutto Passa</div>
-            <div class="cert-artist">Robbie McIntosh</div>
-            <div class="cert-edition-row">
-              <div class="cert-format">
-                <div class="cert-format-dot"></div>
-                <span>Tirage 90×60</span>
-              </div>
-              <div style="margin-left:auto;text-align:right;">
-                <div class="cert-edition-label">Édition</div>
-                <div class="cert-edition-num">12 / 50</div>
+  <!-- ===== MAIN ===== -->
+  <div id="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="burger-btn" onclick="toggleDrawer()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="logo-wrap">
+        <div class="logo-text"><span class="logo-badge">MY</span>KORNER</div>
+      </div>
+      <div class="topbar-right" id="topbar-right"></div>
+    </header>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar-section" id="progress-bar">
+      <div class="pb-row">
+        <div class="pb-left">
+          <span class="pb-badge" id="pb-badge">EXPLORER</span>
+          <span class="pb-label" id="pb-label">250 € → Art Lover</span>
+        </div>
+        <span class="pb-pts" id="pb-pts">125 pts</span>
+      </div>
+      <div class="pb-track"><div class="pb-fill" id="pb-fill" style="width:25%"></div></div>
+    </div>
+
+    <!-- ===== COMMANDES ===== -->
+    <div class="screen active" id="screen-commandes">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>Mes commandes</h2><p>Historique de vos achats</p></div>
+          <div class="tab-filter">
+            <button class="tab-btn active" onclick="filterOrders(this,'all')">Toutes</button>
+            <button class="tab-btn" onclick="filterOrders(this,'yk')">YellowKorner</button>
+            <button class="tab-btn" onclick="filterOrders(this,'lk')">LabKorner</button>
+          </div>
+          <div class="order-card" data-brand="lk">
+            <div class="order-header">
+              <div class="order-thumb" style="background:linear-gradient(135deg,#c0b8b0,#807870);"></div>
+              <div class="order-meta">
+                <div class="brand-pill brand-lk">LK</div>
+                <div class="order-num">Commande #LK-24-0021</div>
+                <div class="order-total">4 524,42 €</div>
+                <div class="order-count">Nombre de produits : 3</div>
               </div>
             </div>
+            <div class="order-status"><span class="status-dot-delivery"></span>En cours de livraison</div>
+            <div class="order-actions">
+              <button class="order-btn primary" onclick="openOrderDetail()">Voir le détail</button>
+              <button class="order-btn" onclick="openTrackModal()">Suivre ma livraison</button>
+            </div>
           </div>
-        </div>
-        <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
-      </div>
-      <div class="cert-card">
-        <div class="cert-info">
-          <div class="cert-thumb" style="background:linear-gradient(135deg,#a8c8a0,#507050);"></div>
-          <div class="cert-details">
-            <div class="cert-title">Blue Morning</div>
-            <div class="cert-artist">Sofia Arnér</div>
-            <div class="cert-edition-row">
-              <div class="cert-format">
-                <div class="cert-format-dot"></div>
-                <span>Tirage 60×40</span>
+          <div class="order-card" data-brand="yk">
+            <div class="order-header">
+              <div class="order-thumb" style="background:linear-gradient(135deg,#e8d878,#c09820);"></div>
+              <div class="order-meta">
+                <div class="brand-pill brand-yk">YK</div>
+                <div class="order-num">Commande Z220425 1552686</div>
+                <div class="order-total">1 240,00 €</div>
+                <div class="order-count">Nombre de produits : 2</div>
               </div>
-              <div style="margin-left:auto;text-align:right;">
-                <div class="cert-edition-label">Édition</div>
-                <div class="cert-edition-num">7 / 30</div>
+            </div>
+            <div class="order-status"><span class="status-dot-delivery"></span>En cours de livraison</div>
+            <div class="order-actions">
+              <button class="order-btn primary" onclick="openOrderDetail()">Voir le détail</button>
+              <button class="order-btn" onclick="openTrackModal()">Suivre ma livraison</button>
+            </div>
+          </div>
+          <div class="order-card" data-brand="yk">
+            <div class="order-header">
+              <div class="order-thumb" style="background:linear-gradient(135deg,#b0c0d8,#5870a0);"></div>
+              <div class="order-meta">
+                <div class="brand-pill brand-yk">YK</div>
+                <div class="order-num">Commande Z211203 9874521</div>
+                <div class="order-total">680,00 €</div>
+                <div class="order-count">Nombre de produits : 1</div>
               </div>
+            </div>
+            <div class="order-status" style="border-color:var(--navy);"><span class="status-dot-delivery" style="background:var(--navy);"></span>Livré</div>
+            <div class="order-actions">
+              <button class="order-btn primary" onclick="openOrderDetail()">Voir le détail</button>
             </div>
           </div>
         </div>
-        <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
       </div>
     </div>
-  </div>
 
-  <!-- ===== SCREEN: FIDÉLITÉ ===== -->
-  <div class="screen fidelite-screen" id="screen-fidelite">
-    <div class="screen-body">
-      <!-- Mon statut -->
-      <div class="section-content" style="padding-bottom:8px;">
-        <div class="section-title"><h2>Mon statut</h2><p id="fid-status-label">EXPLORER</p></div>
-        <div class="status-carousel" id="status-carousel">
-          <!-- Cards injected by JS -->
+    <!-- ===== CARTES CADEAUX ===== -->
+    <div class="screen" id="screen-cartes">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>Mes cartes cadeaux</h2><p>Vos bons d'achat disponibles</p></div>
+          <div class="gift-page-card">
+            <div class="gift-page-header">
+              <div>
+                <div class="gift-page-brand">YellowKorner</div>
+                <div style="font-size:12px;color:var(--navy);margin-top:2px;">Carte cadeau</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="gift-page-amount">150 €</div>
+                <span class="active-badge" style="margin-top:4px;display:inline-flex;">Active</span>
+              </div>
+            </div>
+            <div style="height:1px;background:var(--border);margin:10px 0;"></div>
+            <div class="code-row" onclick="copyCode('YK-GIFT-7823-4490')">
+              <span class="code-text">YK-GIFT-7823-4490</span>
+              <button class="copy-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copier
+              </button>
+            </div>
+            <div class="gift-expiry">Expire le 15 décembre 2025</div>
+          </div>
+          <div class="gift-page-card">
+            <div class="gift-page-header">
+              <div>
+                <div class="gift-page-brand">LabKorner</div>
+                <div style="font-size:12px;color:var(--navy);margin-top:2px;">Carte cadeau</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="gift-page-amount">75 €</div>
+                <span class="active-badge" style="margin-top:4px;display:inline-flex;">Active</span>
+              </div>
+            </div>
+            <div style="height:1px;background:var(--border);margin:10px 0;"></div>
+            <div class="code-row" onclick="copyCode('LK-GIFT-3341-8872')">
+              <span class="code-text">LK-GIFT-3341-8872</span>
+              <button class="copy-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copier
+              </button>
+            </div>
+            <div class="gift-expiry">Expire le 30 juin 2026</div>
+          </div>
         </div>
-        <div class="dots" id="status-dots"></div>
       </div>
+    </div>
 
-      <!-- Mes récompenses -->
-      <div class="section-content" style="background:#fff;padding-top:16px;">
-        <div class="section-title"><h2>Mes récompenses</h2><p>Vos bons d'achat actifs</p></div>
-        <div class="gift-card">
-          <div class="gift-card-header">
+    <!-- ===== CERTIFICATS ===== -->
+    <div class="screen" id="screen-certificats">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>Mes certificats</h2><p>Authenticité de vos œuvres</p></div>
+          <div class="cert-card">
+            <div class="cert-info">
+              <div class="cert-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div>
+              <div>
+                <div class="cert-title">Tutto Passa</div>
+                <div class="cert-artist">Robbie McIntosh</div>
+                <div class="cert-meta">
+                  <div class="cert-format">
+                    <div class="cert-format-circle"></div>
+                    <span>Tirage 90×60</span>
+                  </div>
+                  <div class="cert-edition" style="margin-left:auto;">
+                    <div class="cert-edition-label">Édition</div>
+                    <div class="cert-edition-num">12 / 50</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
+          </div>
+          <div class="cert-card">
+            <div class="cert-info">
+              <div class="cert-thumb" style="background:linear-gradient(135deg,#a8c8a0,#507050);"></div>
+              <div>
+                <div class="cert-title">Blue Morning</div>
+                <div class="cert-artist">Sofia Arnér</div>
+                <div class="cert-meta">
+                  <div class="cert-format">
+                    <div class="cert-format-circle"></div>
+                    <span>Tirage 60×40</span>
+                  </div>
+                  <div class="cert-edition" style="margin-left:auto;">
+                    <div class="cert-edition-label">Édition</div>
+                    <div class="cert-edition-num">7 / 30</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FIDÉLITÉ ===== -->
+    <div class="screen" id="screen-fidelite">
+      <div class="screen-scroll" id="fidelite-scroll">
+        <!-- Mon statut -->
+        <div class="section-content" style="padding-bottom:8px;">
+          <div class="section-title"><h2>Mon statut</h2><p id="fid-status-label">EXPLORER</p></div>
+          <div class="status-carousel" id="status-carousel"></div>
+          <div class="dots" id="status-dots"></div>
+        </div>
+        <!-- Mes récompenses -->
+        <div class="section-content" style="background:#fff;border-top:1px solid var(--border);">
+          <div class="section-title"><h2>Mes récompenses</h2><p>Vos bons d'achat actifs</p></div>
+          <div class="gift-card">
+            <div class="gift-card-header">
+              <div>
+                <div class="gift-card-label">BON D'ACHAT</div>
+                <div class="gift-card-amount">10€</div>
+                <div class="gift-card-info">Utilisable dès 15 € d'achat</div>
+              </div>
+              <span class="active-badge">Active</span>
+            </div>
+            <div class="gift-divider"></div>
+            <div class="code-row" onclick="copyCode('YK-XXXX-XXXX-2847')">
+              <span class="code-text">YK-XXXX-XXXX-2847</span>
+              <button class="copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copier
+              </button>
+            </div>
+            <div class="gift-expiry">Expire le 15 juin 2025</div>
+          </div>
+          <div class="gift-card">
+            <div class="gift-card-header">
+              <div>
+                <div class="gift-card-label">BON D'ACHAT</div>
+                <div class="gift-card-amount">15€</div>
+                <div class="gift-card-info">Utilisable dès 15 € d'achat · Expire le 15 juin 2026</div>
+              </div>
+              <span class="active-badge">Active</span>
+            </div>
+            <div class="gift-divider"></div>
+            <div class="code-row" onclick="copyCode('LK-XXXX-XXXX-2569')">
+              <span class="code-text">LK-XXXX-XXXX-2569</span>
+              <button class="copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copier
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Échanger mes points -->
+        <div class="section-content" style="border-top:1px solid var(--border);">
+          <div class="section-title"><h2>Échanger mes points</h2><p>Boutique de points</p></div>
+          <div class="points-carousel">
+            <div class="point-item unavailable">
+              <div class="point-item-name">Bon d'achat 10 €</div>
+              <div class="point-item-pts">75 pts</div>
+              <button class="point-btn" disabled style="opacity:.45;cursor:not-allowed;">Échanger</button>
+            </div>
+            <div class="point-item unavailable">
+              <div class="point-item-name">Bon d'achat 20 €</div>
+              <div class="point-item-pts">150 pts</div>
+              <button class="point-btn" disabled style="opacity:.45;cursor:not-allowed;">Échanger</button>
+            </div>
+            <div class="point-item">
+              <div class="point-item-name">Bon d'achat 30 €</div>
+              <div class="point-item-pts">225 pts</div>
+              <button class="point-btn" onclick="showToast('Bon d\'achat 30 € généré !')">Échanger</button>
+            </div>
+            <div class="point-item">
+              <div class="point-item-name">Bon d'achat 50 €</div>
+              <div class="point-item-pts">375 pts</div>
+              <button class="point-btn" onclick="showToast('Bon d\'achat 50 € généré !')">Échanger</button>
+            </div>
+            <div class="point-item">
+              <div class="point-item-name">Bon d'achat 100 €</div>
+              <div class="point-item-pts">750 pts</div>
+              <button class="point-btn" onclick="showToast('Bon d\'achat 100 € généré !')">Échanger</button>
+            </div>
+          </div>
+          <div class="dots" style="margin-top:8px;">
+            <div class="dot"></div><div class="dot"></div>
+            <div class="dot active"></div>
+            <div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+        <!-- Historique -->
+        <div class="section-content" style="padding-top:0;border-top:1px solid var(--border);">
+          <button class="history-btn" onclick="openModal('hist-modal')">
+            Voir l'historique de mes points
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WISHLIST ===== -->
+    <div class="screen" id="screen-wishlist">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>Ma wishlist</h2><p>Retrouvez vos coups de cœur</p></div>
+          <p style="font-size:14px;color:var(--navy);margin-bottom:12px;">Retrouvez vos coups de cœur de la collection YellowKorner</p>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <span style="font-size:15px;color:var(--navy);">Partager ma liste</span>
+            <div style="display:flex;gap:8px;">
+              <!-- share icons SVG -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#283553"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#283553"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path fill="#fff" d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#fff" stroke-width="2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#283553"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#283553"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2" fill="#283553"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+          </div>
+          <div class="art-grid">
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"><div class="art-heart"><svg width="14" height="14" viewBox="0 0 24 24" fill="#c00" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#b0c8e0,#5080a0);"><div class="art-heart"><svg width="14" height="14" viewBox="0 0 24 24" fill="#c00" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div></div>
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#e8d8b0,#c0a050);"><div class="art-heart"><svg width="14" height="14" viewBox="0 0 24 24" fill="#c00" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div></div>
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#d0c0e0,#8060a0);"><div class="art-heart"><svg width="14" height="14" viewBox="0 0 24 24" fill="#c00" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ARTISTES & THÈMES ===== -->
+    <div class="screen" id="screen-artistes">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>Artistes & thèmes suivis</h2><p>Vos favoris</p></div>
+          <div class="artist-section">
+            <div class="artist-header">
+              <div class="artist-name-row">
+                <div class="artist-avatar" style="background:linear-gradient(135deg,#d0c090,#a08040);"></div>
+                <div><div class="artist-name">MARIO STEFANELLI</div><div class="artist-tag">à la une</div></div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <div class="art-h-carousel">
+              <div class="art-h-card"><div class="art-h-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div><div class="art-h-body"><div class="art-title" style="font-size:12px;">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+              <div class="art-h-card"><div class="art-h-thumb" style="background:linear-gradient(135deg,#e0c890,#b09030);"></div><div class="art-h-body"><div class="art-title" style="font-size:12px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div></div>
+              <div class="art-h-card"><div class="art-h-thumb" style="background:linear-gradient(135deg,#a8c0d0,#507090);"></div><div class="art-h-body"><div class="art-title" style="font-size:12px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div></div>
+            </div>
+            <button class="btn-secondary" style="margin-top:12px;">+ Ajouter un artiste</button>
+          </div>
+          <div class="artist-section">
+            <div class="artist-header">
+              <div class="artist-name-row">
+                <div><div class="artist-name">ANIMAL</div><div class="artist-tag">à la une</div></div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <div class="art-h-carousel">
+              <div class="art-h-card"><div class="art-h-thumb" style="background:linear-gradient(135deg,#b0d0b0,#508050);"></div><div class="art-h-body"><div class="art-title" style="font-size:12px;">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+              <div class="art-h-card"><div class="art-h-thumb" style="background:linear-gradient(135deg,#d0b0c0,#906080);"></div><div class="art-h-body"><div class="art-title" style="font-size:12px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div></div>
+            </div>
+            <button class="btn-secondary" style="margin-top:12px;">+ Ajouter un thème</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ARTFINDER ===== -->
+    <div class="screen" id="screen-artfinder">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>ArtFinder</h2><p>Votre profil artistique</p></div>
+          <p style="font-size:14px;color:var(--navy);margin-bottom:16px;line-height:1.5;">Votre profil artistique personnalisé — Retrouvez votre sélection Art Finder</p>
+          <div class="art-grid">
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"><div class="art-heart"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#b0c8e0,#5080a0);"><div class="art-heart"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#e8d8b0,#c0a050);"><div class="art-heart"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+            <div class="art-card"><div class="art-thumb" style="background:linear-gradient(135deg,#d0c0e0,#8060a0);"><div class="art-heart"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div></div><div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INFORMATIONS ===== -->
+    <div class="screen" id="screen-infos">
+      <div class="screen-scroll">
+        <div class="section-content">
+          <div class="section-title"><h2>Mes informations</h2></div>
+          <div class="info-block">
+            <div class="info-row"><span class="info-key">Prénom</span><span class="info-value">Camille</span></div>
+            <div class="info-row"><span class="info-key">Nom</span><span class="info-value">Dulèvre</span></div>
+            <div class="info-row"><span class="info-key">E-mail</span><span class="info-value" style="font-size:13px;">camille.d@example.fr</span></div>
+            <div class="info-row"><span class="info-key">Date de naissance</span><span class="info-value">16 mars 1985</span></div>
+            <div class="info-row"><span class="info-key">Ma galerie</span><span class="info-value" style="font-size:13px;">YellowKorner Paris Le Marais</span></div>
+          </div>
+          <button class="btn-primary" style="margin-bottom:16px;font-size:15px;" onclick="openModal('edit-info-modal')">Modifier mes informations</button>
+
+          <div class="section-title"><h2>Préférences</h2></div>
+          <div class="info-block">
+            <div class="toggle-row"><span class="toggle-label">Newsletter e-mail</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label">Notifications SMS</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label">Offres partenaires</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label">Notifications push</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+          </div>
+
+          <div class="section-title"><h2>Mon programme fidélité</h2></div>
+          <div class="loyalty-mini">
+            <div class="loyalty-mini-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="loyalty-mini-info">
+              <div class="loyalty-mini-status">ART LOVER</div>
+              <div class="loyalty-mini-msg">Encore 900 € pour devenir Ambassador</div>
+            </div>
             <div>
-              <div class="gift-card-label">BON D'ACHAT</div>
-              <div class="gift-card-amount">10€</div>
-              <div class="gift-card-info">Utilisable dès 15 € d'achat</div>
+              <div class="loyalty-mini-pts">695</div>
+              <div style="font-size:12px;color:var(--navy);">points</div>
             </div>
-            <span class="gift-active-badge">Active</span>
-          </div>
-          <div class="gift-divider"></div>
-          <div class="code-row" onclick="copyCode(this,'YK-XXXX-XXXX-2847')">
-            <span class="code-text">YK-XXXX-XXXX-2847</span>
-            <button class="copy-btn">📋 Copier</button>
-          </div>
-          <div class="gift-expiry">Expire le 15 juin 2025</div>
-        </div>
-        <div class="gift-card">
-          <div class="gift-card-header">
-            <div>
-              <div class="gift-card-label">BON D'ACHAT</div>
-              <div class="gift-card-amount">15€</div>
-              <div class="gift-card-info">Utilisable dès 15 € d'achat · Expire le 15 juin 2026</div>
-            </div>
-            <span class="gift-active-badge">Active</span>
-          </div>
-          <div class="gift-divider"></div>
-          <div class="code-row" onclick="copyCode(this,'LK-XXXX-XXXX-2569')">
-            <span class="code-text">LK-XXXX-XXXX-2569</span>
-            <button class="copy-btn">📋 Copier</button>
+            <svg width="14" height="28" viewBox="0 0 14 28" fill="none" stroke="#283553" stroke-width="2"><path d="M4 8l6 6-6 6"/></svg>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Échanger mes points -->
-      <div class="section-content" style="padding-top:16px;">
-        <div class="section-title"><h2>Échanger mes points</h2><p>Boutique de points</p></div>
-        <div class="points-carousel" id="points-carousel">
-          <div class="point-item unavailable">
-            <div class="point-item-name">Bon d'achat 10 €</div>
-            <div class="point-item-pts">75 pts</div>
-            <button class="point-exchange-btn" disabled style="opacity:.5;cursor:not-allowed;">Échanger</button>
-          </div>
-          <div class="point-item unavailable">
-            <div class="point-item-name">Bon d'achat 20 €</div>
-            <div class="point-item-pts">150 pts</div>
-            <button class="point-exchange-btn" disabled style="opacity:.5;cursor:not-allowed;">Échanger</button>
-          </div>
-          <div class="point-item">
-            <div class="point-item-name">Bon d'achat 30 €</div>
-            <div class="point-item-pts">225 pts</div>
-            <button class="point-exchange-btn" onclick="exchangePoints(this,225)">Échanger</button>
-          </div>
-          <div class="point-item">
-            <div class="point-item-name">Bon d'achat 50 €</div>
-            <div class="point-item-pts">375 pts</div>
-            <button class="point-exchange-btn" onclick="exchangePoints(this,375)">Échanger</button>
-          </div>
-          <div class="point-item">
-            <div class="point-item-name">Bon d'achat 100 €</div>
-            <div class="point-item-pts">750 pts</div>
-            <button class="point-exchange-btn" onclick="exchangePoints(this,750)">Échanger</button>
-          </div>
-        </div>
-        <div class="dots" id="points-dots" style="margin-top:8px;">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot active"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
+  </div><!-- #main -->
+</div><!-- #shell -->
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== MODAL: MODIFIER INFORMATIONS ===== -->
+<div class="modal-overlay" id="edit-info-modal" onclick="closeModalOverlay(event,'edit-info-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row">
+      <span class="modal-title">Modifier mes informations</span>
+      <button class="modal-close-btn" onclick="closeModal('edit-info-modal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-divider"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="form-group">
+        <label class="form-label">PRENOM</label>
+        <input class="form-input" type="text" value="Camille">
       </div>
-
-      <!-- Historique -->
-      <div class="section-content" style="padding-top:0;">
-        <button class="history-btn" onclick="openHistModal()">
-          Voir l'historique de mes points
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <div class="form-group">
+        <label class="form-label">NOM</label>
+        <input class="form-input" type="text" value="Dulèvre">
+      </div>
+      <div class="form-group" style="opacity:.5;">
+        <label class="form-label">E-MAIL</label>
+        <input class="form-input" type="email" value="camille.d@example.fr" disabled>
+      </div>
+      <div class="form-group" style="opacity:.5;">
+        <label class="form-label">DATE DE NAISSANCE</label>
+        <input class="form-input" type="text" value="16 mars 1985" disabled>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:8px;">
+      <label class="form-label">MA GALERIE</label>
+      <div class="galerie-block">
+        <div class="galerie-current">
+          <div class="galerie-current-name">YellowKorner Paris - Le Marais</div>
+          <div class="galerie-current-label">Votre galerie actuelle</div>
+        </div>
+        <button class="galerie-select-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+          Sélectionner ma galerie
         </button>
       </div>
     </div>
+    <div class="modal-divider"></div>
+    <button class="btn-primary" onclick="closeModal('edit-info-modal');showToast('Modifications enregistrées !')">Enregistrer les modifications</button>
   </div>
+</div>
 
-  <!-- ===== SCREEN: WISHLIST ===== -->
-  <div class="screen" id="screen-wishlist">
-    <div class="section-content">
-      <div class="section-title"><h2>Ma wishlist</h2><p>Retrouvez vos coups de cœur</p></div>
-      <p class="wishlist-subtitle">Retrouvez vos coups de cœur de la collection YellowKorner</p>
-      <div class="wishlist-share">
-        <span>Partager ma liste</span>
-        <div class="share-icons">
-          <div class="share-icon"></div>
-          <div class="share-icon"></div>
-          <div class="share-icon"></div>
-          <div class="share-icon"></div>
-          <div class="share-icon"></div>
+<!-- ===== MODAL: SUIVRE MA LIVRAISON ===== -->
+<div class="modal-overlay" id="track-modal" onclick="closeModalOverlay(event,'track-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row">
+      <span class="modal-title">Suivi de livraison</span>
+      <button class="modal-close-btn" onclick="closeModal('track-modal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="background:var(--bg-light);border-radius:4px;padding:12px;margin:12px 0;">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px;">N° de suivi</div>
+      <div style="font-size:14px;font-weight:700;color:var(--navy);">1Z999AA10123456784</div>
+    </div>
+    <div>
+      <div class="track-step">
+        <div class="track-dot-col"><div class="track-dot"></div><div class="track-line done"></div></div>
+        <div class="track-info" style="margin-left:12px;padding-bottom:8px;">
+          <div class="track-label">Commande confirmée</div>
+          <div class="track-date">24 avril 2024 · 09:12</div>
         </div>
       </div>
-      <div class="art-grid">
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);">
-            <div class="art-heart">❤️</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
+      <div class="track-step">
+        <div class="track-dot-col"><div class="track-dot"></div><div class="track-line done"></div></div>
+        <div class="track-info" style="margin-left:12px;padding-bottom:8px;">
+          <div class="track-label">En préparation</div>
+          <div class="track-date">25 avril 2024 · 14:30</div>
         </div>
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#b0c8e0,#5080a0);">
-            <div class="art-heart">❤️</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+      </div>
+      <div class="track-step">
+        <div class="track-dot-col"><div class="track-dot"></div><div class="track-line done"></div></div>
+        <div class="track-info" style="margin-left:12px;padding-bottom:8px;">
+          <div class="track-label">Expédié</div>
+          <div class="track-date">26 avril 2024 · 08:00</div>
         </div>
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#e8d8b0,#c0a050);">
-            <div class="art-heart">❤️</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+      </div>
+      <div class="track-step">
+        <div class="track-dot-col">
+          <div class="track-dot" style="background:var(--yellow);border:2px solid var(--navy);box-sizing:content-box;"></div>
+          <div class="track-line"></div>
         </div>
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#d0c0e0,#8060a0);">
-            <div class="art-heart">❤️</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
+        <div class="track-info" style="margin-left:12px;padding-bottom:8px;">
+          <div class="track-label" style="color:var(--navy);">En cours de livraison</div>
+          <div class="track-date">Prévu aujourd'hui entre 14h et 18h</div>
+        </div>
+      </div>
+      <div class="track-step" style="border-bottom:none;">
+        <div class="track-dot-col"><div class="track-dot pending"></div></div>
+        <div class="track-info" style="margin-left:12px;">
+          <div class="track-label pending" style="color:var(--border);">Livré</div>
+          <div class="track-date">—</div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ===== SCREEN: ARTISTES & THÈMES ===== -->
-  <div class="screen" id="screen-artistes">
-    <div class="section-content">
-      <div class="section-title"><h2>Artistes & thèmes suivis</h2><p>Vos artistes et thèmes favoris</p></div>
-      <div class="artist-section">
-        <div class="artist-header">
-          <div class="artist-name-row">
-            <div class="artist-avatar" style="background:linear-gradient(135deg,#d0c090,#a08040);"></div>
-            <div>
-              <div class="artist-name">MARIO STEFANELLI</div>
-              <div class="artist-tag">à la une</div>
-            </div>
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-        </div>
-        <div class="art-h-carousel">
-          <div class="art-h-card">
-            <div class="art-h-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div>
-            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
-          </div>
-          <div class="art-h-card">
-            <div class="art-h-thumb" style="background:linear-gradient(135deg,#e0c890,#b09030);"></div>
-            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
-          </div>
-          <div class="art-h-card">
-            <div class="art-h-thumb" style="background:linear-gradient(135deg,#a8c0d0,#507090);"></div>
-            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
-          </div>
-        </div>
-        <button class="btn-secondary" style="margin-top:12px;">+ Ajouter un artiste</button>
-      </div>
-      <div class="artist-section">
-        <div class="artist-header">
-          <div class="artist-name-row">
-            <div>
-              <div class="artist-name">ANIMAL</div>
-              <div class="artist-tag">à la une</div>
-            </div>
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-        </div>
-        <div class="art-h-carousel">
-          <div class="art-h-card">
-            <div class="art-h-thumb" style="background:linear-gradient(135deg,#b0d0b0,#508050);"></div>
-            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
-          </div>
-          <div class="art-h-card">
-            <div class="art-h-thumb" style="background:linear-gradient(135deg,#d0b0c0,#906080);"></div>
-            <div class="art-h-body"><div class="art-title" style="font-size:13px;">Nom œuvre</div><div class="art-artist">Nom artiste</div></div>
-          </div>
-        </div>
-        <button class="btn-secondary" style="margin-top:12px;">+ Ajouter un thème</button>
+<!-- ===== MODAL: DÉTAIL COMMANDE ===== -->
+<div class="modal-overlay" id="order-detail-modal" onclick="closeModalOverlay(event,'order-detail-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row">
+      <span class="modal-title">Commande #LK-24-0021</span>
+      <button class="modal-close-btn" onclick="closeModal('order-detail-modal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-divider"></div>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;">
+      <div style="width:70px;height:70px;background:linear-gradient(135deg,#c0b8b0,#807870);border-radius:4px;flex-shrink:0;"></div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--navy);">Tutto Passa</div>
+        <div style="font-size:13px;color:#666;">Robbie McIntosh</div>
+        <div style="font-size:12px;color:var(--navy);margin-top:4px;">Tirage 90×60 · Édition 12/50</div>
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:4px;">1 508,14 €</div>
       </div>
     </div>
-  </div>
-
-  <!-- ===== SCREEN: ARTFINDER ===== -->
-  <div class="screen" id="screen-artfinder">
-    <div class="section-content">
-      <div class="section-title"><h2>ArtFinder</h2><p>Votre profil artistique</p></div>
-      <p class="artfinder-subtitle">Votre profil artistique personnalisé — Retrouvez votre sélection Art Finder</p>
-      <div class="art-grid">
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);aspect-ratio:3/4;">
-            <div class="art-heart">🤍</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
-        </div>
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#b0c8e0,#5080a0);aspect-ratio:3/4;">
-            <div class="art-heart">🤍</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
-        </div>
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#e8d8b0,#c0a050);aspect-ratio:3/4;">
-            <div class="art-heart">🤍</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
-        </div>
-        <div class="art-card">
-          <div class="art-thumb" style="background:linear-gradient(135deg,#d0c0e0,#8060a0);aspect-ratio:3/4;">
-            <div class="art-heart">🤍</div>
-          </div>
-          <div class="art-card-body"><div class="art-title">Tutto Passa</div><div class="art-artist">Robbie McIntosh</div></div>
-        </div>
-      </div>
+    <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
+    <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--navy);margin-bottom:8px;">
+      <span>Sous-total</span><span>4 524,42 €</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--navy);margin-bottom:8px;">
+      <span>Livraison</span><span>Offerte</span>
+    </div>
+    <div style="height:1px;background:var(--border);margin:12px 0;"></div>
+    <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--navy);">
+      <span>Total</span><span>4 524,42 €</span>
+    </div>
+    <div style="margin-top:16px;">
+      <button class="btn-primary" onclick="closeModal('order-detail-modal');openTrackModal()">Suivre ma livraison</button>
     </div>
   </div>
+</div>
 
-  <!-- ===== SCREEN: INFORMATIONS ===== -->
-  <div class="screen" id="screen-infos">
-    <div class="section-content">
-      <div class="section-title"><h2>Mes informations</h2></div>
-      <div class="info-block">
-        <div class="info-row"><span class="info-key">Prénom</span><span class="info-value">Camille</span></div>
-        <div class="info-row"><span class="info-key">Nom</span><span class="info-value">Dulèvre</span></div>
-        <div class="info-row"><span class="info-key">E-mail</span><span class="info-value" style="font-size:14px;">camille.d@example.fr</span></div>
-        <div class="info-row"><span class="info-key">Date de naissance</span><span class="info-value">16 mars 1985</span></div>
-        <div class="info-row"><span class="info-key">Ma galerie</span><span class="info-value" style="font-size:13px;max-width:200px;text-align:right;">YellowKorner Paris Le Marais</span></div>
-      </div>
-      <button class="btn-primary" style="margin-bottom:16px;font-size:15px;">Modifier mes informations</button>
-
-      <div class="section-title"><h2>Préférences</h2></div>
-      <div class="info-block">
-        <div class="toggle-row">
-          <span class="toggle-label">Newsletter e-mail</span>
-          <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="toggle-row">
-          <span class="toggle-label">Notifications SMS</span>
-          <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="toggle-row">
-          <span class="toggle-label">Offres partenaires</span>
-          <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
-        </div>
-        <div class="toggle-row">
-          <span class="toggle-label">Notifications push</span>
-          <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
-        </div>
-      </div>
-
-      <div class="section-title"><h2>Mon programme fidélité</h2></div>
-      <div class="loyalty-mini">
-        <div class="loyalty-mini-icon">◎</div>
-        <div class="loyalty-mini-info">
-          <div class="loyalty-mini-status" id="info-status">ART LOVER</div>
-          <div class="loyalty-mini-msg" id="info-status-msg">Encore 900 € pour devenir Ambassador</div>
-        </div>
-        <div>
-          <div class="loyalty-mini-pts">695</div>
-          <div style="font-size:12px;color:var(--navy);">points</div>
-        </div>
-      </div>
+<!-- ===== MODAL: HISTORIQUE POINTS ===== -->
+<div class="modal-overlay" id="hist-modal" onclick="closeModalOverlay(event,'hist-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title-row">
+      <span class="modal-title">Historique de points</span>
+      <button class="modal-close-btn" onclick="closeModal('hist-modal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
+    <div class="modal-divider"></div>
+    <div class="hist-item"><div><div style="font-weight:700;">Achat - Tutto Passa</div><div class="track-date">12 avril 2024</div></div><span class="hist-pts gain">+68 pts</span></div>
+    <div class="hist-item"><div><div style="font-weight:700;">Bienvenue</div><div class="track-date">01 janvier 2024</div></div><span class="hist-pts gain">+20 pts</span></div>
+    <div class="hist-item"><div><div style="font-weight:700;">Achat - Blue Morning</div><div class="track-date">03 mars 2024</div></div><span class="hist-pts gain">+34 pts</span></div>
+    <div class="hist-item"><div><div style="font-weight:700;">Bon d'achat utilisé</div><div class="track-date">15 février 2024</div></div><span class="hist-pts use">-50 pts</span></div>
+    <div class="hist-item"><div><div style="font-weight:700;">Anniversaire</div><div class="track-date">16 mars 2024</div></div><span class="hist-pts gain">+20 pts</span></div>
+    <div class="hist-item" style="border-bottom:none;"><div><div style="font-weight:700;">Achat - Nom œuvre</div><div class="track-date">20 février 2024</div></div><span class="hist-pts gain">+33 pts</span></div>
   </div>
-
-  <!-- TOAST -->
-  <div class="toast" id="toast">Code copié !</div>
-
-  <!-- MODAL HISTORIQUE -->
-  <div class="modal-overlay" id="hist-modal" onclick="closeHistModal(event)">
-    <div class="modal-sheet" onclick="event.stopPropagation()">
-      <div class="modal-handle"></div>
-      <div class="section-title" style="margin-bottom:16px;"><h2>Historique de points</h2></div>
-      <div class="hist-item"><span>Achat - Tutto Passa<br><small>12 avril 2024</small></span><span class="hist-pts gain">+68 pts</span></div>
-      <div class="hist-item"><span>Bienvenue<br><small>01 janvier 2024</small></span><span class="hist-pts gain">+20 pts</span></div>
-      <div class="hist-item"><span>Achat - Blue Morning<br><small>03 mars 2024</small></span><span class="hist-pts gain">+34 pts</span></div>
-      <div class="hist-item"><span>Bon d'achat utilisé<br><small>15 février 2024</small></span><span class="hist-pts use">-50 pts</span></div>
-      <div class="hist-item"><span>Anniversaire<br><small>16 mars 2024</small></span><span class="hist-pts gain">+20 pts</span></div>
-    </div>
-  </div>
-
-</div><!-- #app -->
+</div>
 
 <script>
-// ===== STATE =====
+// ===== PERSONAS =====
 const personas = {
-  explorer: {
-    label: 'EXPLORER',
-    pbLabel: '250 € → Art Lover',
-    pbPoints: '125 pts',
-    pbFill: 25,
-    statusIdx: 0,
-    perks: ['1 point par euro dépensé','20 points de bienvenue','20 points anniversaire','Frais de port réduits'],
-    progress: { text: 'Il reste 250€ pour atteindre Art Lover', fill: 50 }
-  },
-  artlover: {
-    label: 'ART LOVER',
-    pbLabel: '500 € → Ambassador',
-    pbPoints: '695 pts',
-    pbFill: 55,
-    statusIdx: 1,
-    perks: ['1,5 point par euro dépensé','50 points de bienvenue','Artprint encadré offert','50 points anniversaire','Frais de port réduits','Offres exclusives & évènements'],
-    progress: { text: 'Il reste 900€ pour atteindre Ambassador', fill: 45 }
-  },
-  ambassador: {
-    label: 'AMBASSADOR',
-    pbLabel: '2000 € atteints 🎉',
-    pbPoints: '1 840 pts',
-    pbFill: 100,
-    statusIdx: 2,
-    perks: ['3 points par euro dépensé','200 points de bienvenue','Artshot ou Sélection offert','Livraison offerte sans minimum','Accès VIP galeries'],
-    progress: null
-  }
+  explorer:{label:'EXPLORER',pbLabel:'250 € → Art Lover',pbPts:'125 pts',pbFill:25,statusIdx:0,
+    sbName:'Explorer',sbPts:'125 pts'},
+  artlover:{label:'ART LOVER',pbLabel:'500 € → Ambassador',pbPts:'695 pts',pbFill:55,statusIdx:1,
+    sbName:'Art Lover',sbPts:'695 pts'},
+  ambassador:{label:'AMBASSADOR',pbLabel:'2 000 € atteints 🎉',pbPts:'1 840 pts',pbFill:100,statusIdx:2,
+    sbName:'Ambassador',sbPts:'1 840 pts'},
 };
+let currentPersona='explorer';
 
-let currentPersona = 'explorer';
-let currentScreen = 'commandes';
+const statusDefs=[
+  {key:'explorer',name:'EXPLORER',threshold:"Dès l'inscription",
+   icon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#283553"/></svg>`,
+   perks:[
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,'text':'1 point par euro dépensé'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`,'text':'20 points de bienvenue'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,'text':'20 points anniversaire'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,'text':'Frais de port réduits'},
+   ],
+   progress:{text:'Il reste 250€ pour atteindre Art Lover',fill:50}},
+  {key:'artlover',name:'ART LOVER',threshold:'Dès 500 € cumulés',
+   icon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="#283553" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
+   perks:[
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,'text':'1,5 point par euro dépensé'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`,'text':'50 points de bienvenue'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,'text':'Un Artprint encadré offert'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,'text':'50 points anniversaire'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,'text':'Frais de port réduits'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/><circle cx="9" cy="7" r="4"/></svg>`,'text':'Offres exclusives & évènements'},
+   ],
+   progress:{text:'Il reste 900€ pour atteindre Ambassador',fill:45}},
+  {key:'ambassador',name:'AMBASSADOR',threshold:'Dès 2 000 € cumulés',
+   icon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+   lockedIcon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>`,
+   perks:[
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,'text':'3 points par euro dépensé'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`,'text':'200 points de bienvenue'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,'text':'Artshot ou Sélection offert'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,'text':'Livraison offerte sans minimum'},
+     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,'text':'Accès VIP galeries'},
+   ],
+   progress:null},
+];
 
-// ===== NAVIGATION =====
-function navigate(screen) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + screen).classList.add('active');
-  currentScreen = screen;
-
-  // Progress bar visibility
-  const pb = document.getElementById('progress-bar');
-  pb.classList.toggle('visible', screen === 'fidelite');
-
-  // Persona switcher in topbar
-  const right = document.getElementById('topbar-right');
-  if (screen === 'fidelite') {
-    right.innerHTML = buildPersonaSwitcher();
-  } else {
-    right.innerHTML = '';
-  }
-
-  // Active nav item
-  document.querySelectorAll('#drawer-nav a').forEach(a => {
-    a.classList.toggle('active', a.dataset.screen === screen);
+// ===== NAVIGATE =====
+function navigate(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+screen).classList.add('active');
+  document.querySelectorAll('.sb-link').forEach(l=>{
+    l.classList.toggle('active',l.dataset.screen===screen);
   });
-
+  const pb=document.getElementById('progress-bar');
+  pb.classList.toggle('visible',screen==='fidelite');
+  const topRight=document.getElementById('topbar-right');
+  topRight.innerHTML=screen==='fidelite'?buildPersonaSwitcher():'';
+  if(screen==='fidelite') renderStatusCards();
   closeDrawer();
-  if (screen === 'fidelite') renderStatusCards();
 }
 
-// ===== DRAWER =====
-function toggleDrawer() {
-  document.getElementById('drawer').classList.toggle('open');
+// ===== DRAWER (mobile) =====
+function toggleDrawer(){
+  document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('drawer-overlay').classList.toggle('open');
 }
-function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open');
+function closeDrawer(){
+  document.getElementById('sidebar').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
 }
 
 // ===== PERSONA SWITCHER =====
-function buildPersonaSwitcher() {
-  const p = personas[currentPersona];
-  return `
-    <div class="persona-switcher">
-      <button class="persona-btn" id="persona-btn" onclick="togglePersonaDropdown(event)">
-        <span style="font-size:9px;">●</span> ${p.label}
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="persona-dropdown" id="persona-dropdown">
-        ${Object.entries(personas).map(([key, val]) => `
-          <div class="persona-option ${key === currentPersona ? 'active' : ''}" onclick="selectPersona('${key}')">
-            <span class="persona-dot" style="background:${key==='ambassador'?'#c0a000':key==='artlover'?'#283553':'#44aa44'}"></span>
-            ${val.label}
-          </div>
-        `).join('')}
-      </div>
-    </div>`;
+function buildPersonaSwitcher(){
+  const p=personas[currentPersona];
+  return `<div class="persona-switcher">
+    <button class="persona-btn" id="persona-btn" onclick="togglePersonaDD(event)">
+      <span style="font-size:8px;">●</span> ${p.label}
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="persona-dropdown" id="persona-dd">
+      ${Object.entries(personas).map(([k,v])=>`
+        <div class="persona-option ${k===currentPersona?'active':''}" onclick="selectPersona('${k}')">
+          <span class="persona-dot" style="background:${k==='ambassador'?'#c0a000':k==='artlover'?'#283553':'#3a9a3a'}"></span>
+          ${v.label}
+        </div>`).join('')}
+    </div>
+  </div>`;
 }
-
-function togglePersonaDropdown(e) {
+function togglePersonaDD(e){
   e.stopPropagation();
-  const dd = document.getElementById('persona-dropdown');
-  const btn = document.getElementById('persona-btn');
-  dd.classList.toggle('open');
-  btn.classList.toggle('open');
+  document.getElementById('persona-dd')?.classList.toggle('open');
+  document.getElementById('persona-btn')?.classList.toggle('open');
 }
-
-function selectPersona(key) {
-  currentPersona = key;
-  const p = personas[key];
-
-  // Update progress bar
-  document.getElementById('pb-status-badge').textContent = p.label;
-  document.getElementById('pb-label').textContent = p.pbLabel;
-  document.getElementById('pb-points').textContent = p.pbPoints;
-  document.getElementById('pb-fill').style.width = p.pbFill + '%';
-
-  // Update fidélité title
-  document.getElementById('fid-status-label').textContent = p.label;
-
-  // Update topbar switcher
-  document.getElementById('topbar-right').innerHTML = buildPersonaSwitcher();
-
+function selectPersona(k){
+  currentPersona=k;
+  const p=personas[k];
+  document.getElementById('pb-badge').textContent=p.label;
+  document.getElementById('pb-label').textContent=p.pbLabel;
+  document.getElementById('pb-pts').textContent=p.pbPts;
+  document.getElementById('pb-fill').style.width=p.pbFill+'%';
+  document.getElementById('fid-status-label').textContent=p.label;
+  document.getElementById('sb-status-name').textContent=p.sbName;
+  document.getElementById('sb-status-pts').textContent=p.sbPts;
+  document.getElementById('topbar-right').innerHTML=buildPersonaSwitcher();
   renderStatusCards();
 }
+document.addEventListener('click',()=>{
+  document.getElementById('persona-dd')?.classList.remove('open');
+  document.getElementById('persona-btn')?.classList.remove('open');
+});
 
 // ===== STATUS CARDS =====
-const statusDefs = [
-  {
-    key: 'explorer',
-    name: 'EXPLORER',
-    threshold: 'Dès l\'inscription',
-    icon: '🧭',
-    perks: ['1 point par euro dépensé', '20 pts bienvenue', '20 pts anniversaire', 'Frais de port réduits'],
-    progressText: 'Il reste 250€ pour atteindre Art Lover',
-    progressFill: 50,
-  },
-  {
-    key: 'artlover',
-    name: 'ART LOVER',
-    threshold: 'Dès 500 € cumulés',
-    icon: '❤️',
-    perks: ['1,5 point par euro dépensé', '50 pts bienvenue', 'Artprint encadré offert', '50 pts anniversaire', 'Frais de port réduits', 'Offres exclusives & évènements'],
-    progressText: 'Il reste 900€ pour atteindre Ambassador',
-    progressFill: 45,
-  },
-  {
-    key: 'ambassador',
-    name: 'AMBASSADOR',
-    threshold: 'Dès 2 000 € cumulés',
-    icon: '🌟',
-    perks: ['3 points par euro dépensé', '200 pts bienvenue', 'Artshot ou Sélection offert', 'Livraison offerte sans minimum', 'Accès VIP galeries'],
-    progressText: null,
-    progressFill: 0,
-  },
-];
-
-function renderStatusCards() {
-  const activeIdx = personas[currentPersona].statusIdx;
-  const carousel = document.getElementById('status-carousel');
-  const dotsEl = document.getElementById('status-dots');
-
-  carousel.innerHTML = statusDefs.map((s, i) => {
-    const isActive = i === activeIdx;
-    const isLocked = i > activeIdx;
-    const badge = isActive ? 'ACQUIS' : (isLocked ? 'À DÉBLOQUER' : 'ACQUIS');
-    const perksHtml = s.perks.map(p => `
-      <div class="status-perk"><span class="status-perk-icon">·</span><span>${p}</span></div>
-    `).join('');
-    const progressHtml = (!isLocked && s.progressText) ? `
+function renderStatusCards(){
+  const activeIdx=personas[currentPersona].statusIdx;
+  const c=document.getElementById('status-carousel');
+  const d=document.getElementById('status-dots');
+  c.innerHTML=statusDefs.map((s,i)=>{
+    const locked=i>activeIdx;
+    const badge=i<=activeIdx?'ACQUIS':'À DÉBLOQUER';
+    const iconHtml=locked&&s.lockedIcon?s.lockedIcon:s.icon;
+    const perksHtml=s.perks.map(p=>`<div class="status-perk"><span class="status-perk-icon">${p.icon}</span><span>${p.text}</span></div>`).join('');
+    const progressHtml=(!locked&&s.progress)?`
       <div class="status-divider"></div>
-      <div class="status-progress-text">${s.progressText}</div>
-      <div class="status-progress-track"><div class="status-progress-fill" style="width:${s.progressFill}%"></div></div>
-    ` : '';
-    return `
-      <div class="status-card ${isLocked?'locked':''}" data-idx="${i}">
-        <div class="status-card-header">
-          <div class="status-icon-wrap"><span style="font-size:16px;">${isLocked?'🔒':s.icon}</span></div>
-          <div>
-            <div class="status-name">${s.name}</div>
-            <div class="status-threshold">${s.threshold}</div>
-          </div>
-          <span class="status-badge">${badge}</span>
-        </div>
-        <div class="status-divider"></div>
-        ${perksHtml}
-        ${progressHtml}
-      </div>`;
+      <div class="status-progress-text">${s.progress.text}</div>
+      <div class="status-progress-track"><div class="status-progress-fill" style="width:${s.progress.fill}%"></div></div>`:'';
+    return `<div class="status-card ${locked?'locked':''}" data-idx="${i}">
+      <div class="status-card-header">
+        <div class="status-icon-wrap">${iconHtml}</div>
+        <div><div class="status-name">${s.name}</div><div class="status-threshold">${s.threshold}</div></div>
+        <span class="status-badge">${badge}</span>
+      </div>
+      <div class="status-divider"></div>
+      ${perksHtml}${progressHtml}
+    </div>`;
   }).join('');
-
-  dotsEl.innerHTML = statusDefs.map((_, i) =>
-    `<div class="dot ${i===activeIdx?'active':''}"></div>`
-  ).join('');
-
-  // Scroll to active card
-  setTimeout(() => {
-    const active = carousel.querySelector(`[data-idx="${activeIdx}"]`);
-    if (active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-  }, 50);
+  d.innerHTML=statusDefs.map((_,i)=>`<div class="dot ${i===activeIdx?'active':''}"></div>`).join('');
+  setTimeout(()=>{
+    const el=c.querySelector(`[data-idx="${activeIdx}"]`);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },60);
 }
 
-// ===== ORDERS FILTER =====
-function filterOrders(btn, brand) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+// ===== ORDERS =====
+function filterOrders(btn,brand){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.order-card').forEach(card => {
-    card.style.display = (brand === 'all' || card.dataset.brand === brand) ? 'block' : 'none';
+  document.querySelectorAll('.order-card').forEach(card=>{
+    card.style.display=(brand==='all'||card.dataset.brand===brand)?'block':'none';
   });
 }
 
-// ===== COPY CODE =====
-function copyCode(el, code) {
-  navigator.clipboard.writeText(code).catch(() => {});
+// ===== MODALS =====
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeModalOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+function openTrackModal(){openModal('track-modal');}
+function openOrderDetail(){openModal('order-detail-modal');}
+
+// ===== COPY =====
+function copyCode(code){
+  navigator.clipboard.writeText(code).catch(()=>{});
   showToast('Code copié !');
 }
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
 
-// ===== EXCHANGE POINTS =====
-function exchangePoints(btn, pts) {
-  showToast(`Échange de ${pts} pts effectué !`);
-}
-
-// ===== HISTORY MODAL =====
-function openHistModal() {
-  document.getElementById('hist-modal').classList.add('open');
-}
-function closeHistModal(e) {
-  document.getElementById('hist-modal').classList.remove('open');
+// ===== TOAST =====
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
 }
 
 // ===== INIT =====
 renderStatusCards();
-
-// Close persona dropdown on outside click
-document.addEventListener('click', () => {
-  const dd = document.getElementById('persona-dropdown');
-  const btn = document.getElementById('persona-btn');
-  if (dd) dd.classList.remove('open');
-  if (btn) btn.classList.remove('open');
-});
 </script>
 </body>
 </html>
