@@ -41,7 +41,8 @@ body{
 }
 @media(min-width:900px){
   #shell{
-    width:860px;
+    width:100%;
+    max-width:1440px;
   }
 }
 
@@ -95,6 +96,7 @@ body{
   padding:12px;
   border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
+  cursor:pointer;
 }
 .sb-avatar{
   width:32px;height:32px;
@@ -109,6 +111,7 @@ body{
 .sb-status{
   padding:12px;
   border-bottom:1px solid var(--border);
+  cursor:pointer;
 }
 .sb-status-badge{
   background:var(--beige);
@@ -151,9 +154,12 @@ body{
   font-family:'Arimo',sans-serif;
   background:none;border:none;cursor:pointer;
   padding:16px 0;
+  width:100%;
+  display:flex;justify-content:center;
+}
+.sb-deconnect span{
   border-bottom:1px solid var(--navy);
-  width:100%;text-align:center;
-  display:block;
+  padding-bottom:2px;
 }
 
 .sb-external{
@@ -605,7 +611,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
   <div id="drawer-overlay" onclick="closeDrawer()"></div>
   <aside id="sidebar">
     <!-- User -->
-    <div class="sb-user">
+    <div class="sb-user" onclick="navigate('infos')">
       <div class="sb-avatar"></div>
       <div>
         <div class="sb-name">Camille D.</div>
@@ -613,7 +619,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
       </div>
     </div>
     <!-- Status -->
-    <div class="sb-status">
+    <div class="sb-status" onclick="navigate('fidelite')">
       <div class="sb-status-badge">
         <span class="sb-status-name" id="sb-status-name">Art Lover</span>
         <span class="sb-status-pts" id="sb-status-pts">695 pts</span>
@@ -635,7 +641,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
         <button class="sb-link" data-screen="infos" onclick="navigate('infos')">Mes informations</button>
       </div>
       <div class="sb-bottom">
-        <button class="sb-deconnect" onclick="openModal('logout-modal')">Déconnexion</button>
+        <button class="sb-deconnect" onclick="openModal('logout-modal')"><span>Déconnexion</span></button>
       </div>
     </nav>
     <!-- External links -->
