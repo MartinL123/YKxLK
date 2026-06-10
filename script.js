@@ -72,8 +72,11 @@ function updateSidebarA11y(){
   if(burger) burger.setAttribute('aria-expanded',open?'true':'false');
 }
 function toggleDrawer(){
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar=document.getElementById('sidebar');
+  const opening=!sidebar.classList.contains('open');
+  sidebar.classList.toggle('open');
   document.getElementById('drawer-overlay').classList.toggle('open');
+  if(opening) sidebar.scrollTop=0;
   updateSidebarA11y();
 }
 function closeDrawer(){

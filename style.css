@@ -373,7 +373,8 @@ body{
 .copy-btn.copied{
   background:var(--gold);color:var(--navy);
 }
-.gift-card .copy-btn.copied{
+.gift-card .copy-btn.copied,
+.gift-page-card .copy-btn.copied{
   background:var(--navy);color:#fff;
 }
 .gift-expiry{font-size:10px;color:var(--navy);margin-top:4px;}
