@@ -195,6 +195,12 @@ body{
   padding:0 16px;
   gap:8px;
 }
+@media(min-width:900px){
+  /* burger masqué : colonnes symétriques pour garder le logo centré */
+  .topbar{grid-template-columns:120px 1fr 120px;}
+  .logo-wrap{grid-column:2;}
+  .topbar-right{grid-column:3;}
+}
 .burger-btn{
   background:none;border:none;cursor:pointer;
   padding:8px 4px;
