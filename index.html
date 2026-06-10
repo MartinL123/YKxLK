@@ -6,618 +6,16 @@
 <title>MYKorner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Arimo:wght@400;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --navy:#283553;
-  --beige:#F8F2DF;
-  --yellow:#FFCE00;
-  --grey:#E2E3DA;
-  --border:#DDDBD8;
-  --bg-light:#F5F4F2;
-  --text-dark:#1D1D1B;
-  --text-mid:#444440;
-  --text-muted:#888884;
-  --white:#FFFFFF;
-  --gold:#FDF298;
-}
-body{
-  background:#f0efed;
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-}
-
-/* ===== LAYOUT ===== */
-#shell{
-  display:flex;
-  width:430px;
-  max-width:100%;
-  min-height:100vh;
-  background:#fff;
-  position:relative;
-}
-@media(min-width:900px){
-  #shell{
-    width:100%;
-    max-width:1440px;
-  }
-}
-
-/* SIDEBAR */
-#sidebar{
-  width:215px;
-  flex-shrink:0;
-  background:#fff;
-  border-right:1px solid #ECEAE6;
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-  position:sticky;
-  top:0;
-  overflow-y:auto;
-}
-/* Mobile: sidebar hidden, shown as overlay drawer */
-@media(max-width:899px){
-  #sidebar{
-    position:fixed;
-    top:0;left:0;bottom:0;
-    z-index:200;
-    transform:translateX(-100%);
-    transition:transform .25s;
-    height:100%;
-  }
-  #sidebar.open{transform:translateX(0);}
-  #drawer-overlay{
-    display:block;
-  }
-}
-@media(min-width:900px){
-  #sidebar{display:flex !important; transform:none !important;}
-  #drawer-overlay{display:none !important;}
-  .burger-btn{display:none !important;}
-}
-
-#drawer-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.35);
-  z-index:199;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .25s;
-}
-#drawer-overlay.open{opacity:1;pointer-events:all;}
-
-/* SIDEBAR INNER */
-.sb-user{
-  display:flex;align-items:center;gap:8px;
-  padding:12px;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  cursor:pointer;
-}
-.sb-avatar{
-  width:32px;height:32px;
-  border-radius:16px;
-  background:var(--beige);
-  border:1.6px solid var(--grey);
-  flex-shrink:0;
-}
-.sb-name{font-size:14px;font-weight:700;color:#111;}
-.sb-email{font-size:12px;color:var(--text-muted);}
-
-.sb-status{
-  padding:12px;
-  border-bottom:1px solid var(--border);
-  cursor:pointer;
-}
-.sb-status-badge{
-  background:var(--beige);
-  border:1px solid var(--grey);
-  border-radius:4px;
-  padding:8px 10px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.sb-status-name{font-size:16px;font-weight:700;color:#111;}
-.sb-status-pts{font-size:16px;color:var(--text-muted);}
-
-.sb-nav{
-  flex:1;
-  background:var(--beige);
-  display:flex;flex-direction:column;justify-content:space-between;
-  overflow-y:auto;
-}
-.sb-nav-links{display:flex;flex-direction:column;}
-.sb-link{
-  display:block;
-  padding:15px 24px 15px 26px;
-  font-size:16px;
-  color:var(--text-dark);
-  text-decoration:none;
-  border-left:2px solid transparent;
-  cursor:pointer;
-  background:none;border-top:none;border-right:none;border-bottom:none;
-  text-align:left;width:100%;
-  font-family:Arial,sans-serif;
-}
-.sb-link:hover{background:rgba(0,0,0,.03);}
-.sb-link.active{border-left-color:var(--text-dark);font-weight:700;}
-.sb-sep{height:1px;background:var(--border);}
-
-.sb-bottom{padding:0 24px 16px;}
-.sb-deconnect{
-  font-size:16px;
-  color:var(--navy);
-  font-weight:700;
-  font-family:'Arimo',sans-serif;
-  background:none;border:none;cursor:pointer;
-  padding:16px 0;
-  width:100%;
-  display:flex;justify-content:center;
-}
-.sb-deconnect span{
-  border-bottom:1px solid var(--navy);
-  padding-bottom:2px;
-}
-
-.sb-external{
-  border-top:1px solid var(--border);
-  padding:16px;
-  display:flex;flex-direction:column;gap:4px;
-}
-.sb-ext-title{font-size:16px;font-weight:700;color:var(--text-muted);margin-bottom:4px;}
-.sb-ext-link{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:4px 0;
-  text-decoration:none;color:var(--text-dark);font-size:14px;
-}
-.sb-ext-icon{width:16px;height:16px;opacity:.5;}
-
-/* MAIN AREA */
-#main{
-  flex:1;
-  min-width:0;
-  display:flex;flex-direction:column;
-  min-height:100vh;
-}
-
-/* TOPBAR */
-.topbar{
-  position:sticky;top:0;z-index:100;
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  height:68px;
-  display:grid;
-  grid-template-columns:44px 1fr 80px;
-  align-items:center;
-  padding:0 16px;
-  gap:8px;
-}
-@media(min-width:900px){
-  /* burger masqué : colonnes symétriques pour garder le logo centré */
-  .topbar{grid-template-columns:120px 1fr 120px;}
-  .logo-wrap{grid-column:2;}
-  .topbar-right{grid-column:3;}
-}
-.burger-btn{
-  background:none;border:none;cursor:pointer;
-  padding:8px 4px;
-  display:flex;flex-direction:column;gap:4.5px;
-  justify-self:start;
-}
-.burger-btn span{display:block;width:18px;height:1.5px;background:var(--navy);border-radius:1px;}
-.logo-wrap{
-  display:flex;justify-content:center;align-items:center;
-}
-.logo-text{
-  font-family:'Libre Baskerville',serif;
-  font-weight:700;color:var(--navy);
-  font-size:17px;letter-spacing:2px;
-  display:flex;align-items:center;gap:0;
-}
-.logo-badge{
-  background:var(--navy);color:#fff;
-  border-radius:50%;width:22px;height:22px;
-  display:inline-flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:700;
-  margin-right:3px;
-}
-.topbar-right{display:flex;justify-content:flex-end;align-items:center;}
-
-/* PROGRESS BAR */
-.progress-bar-section{
-  background:var(--beige);
-  border-bottom:1px solid #e8e0cc;
-  padding:12px 16px;
-  display:none;
-}
-.progress-bar-section.visible{display:block;}
-.pb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
-.pb-left{display:flex;align-items:center;gap:8px;}
-.pb-badge{
-  border:1px solid var(--navy);color:var(--navy);
-  font-weight:700;font-size:13px;
-  padding:3px 8px;border-radius:3px;
-}
-.pb-label{font-size:14px;color:var(--navy);}
-.pb-pts{font-weight:700;font-size:15px;color:var(--navy);}
-.pb-track{background:var(--grey);border-radius:2px;height:4px;width:100%;}
-.pb-fill{background:var(--navy);height:100%;border-radius:2px;transition:width .4s;}
-
-/* SCREENS */
-.screen{display:none;overflow-y:auto;flex:1;}
-.screen.active{display:block;}
-.screen-scroll{
-  height:calc(100vh - 68px);
-  height:calc(100dvh - 68px);
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-}
-.screen-scroll.with-pb{
-  height:calc(100vh - 68px - 63px);
-  height:calc(100dvh - 68px - 63px);
-}
-.section-content{padding:16px;}
-
-/* SECTION TITLE */
-.section-title{
-  border-left:2px solid var(--navy);
-  padding-left:8px;margin-bottom:16px;
-}
-.section-title h2{
-  font-family:'Libre Baskerville',serif;font-weight:700;
-  font-size:20px;color:var(--navy);line-height:1;
-}
-.section-title p{font-size:12px;color:var(--navy);margin-top:4px;}
-
-/* BUTTONS */
-.btn-primary{
-  background:var(--navy);color:#fff;
-  border:1px solid var(--navy);padding:14px;
-  width:100%;font-family:Arial,sans-serif;font-weight:700;font-size:15px;
-  cursor:pointer;border-radius:2px;text-align:center;
-}
-.btn-secondary{
-  background:#fff;color:var(--navy);
-  border:1px solid var(--navy);padding:13px;
-  width:100%;font-family:Arial,sans-serif;font-size:15px;
-  cursor:pointer;border-radius:2px;
-}
-
-/* ===== PERSONA SWITCHER ===== */
-.persona-switcher{position:relative;}
-.persona-btn{
-  background:none;border:1px solid var(--navy);color:var(--navy);
-  font-family:Arial,sans-serif;font-weight:700;font-size:11px;
-  padding:4px 8px;border-radius:3px;cursor:pointer;
-  display:flex;align-items:center;gap:4px;white-space:nowrap;
-}
-.persona-btn svg{transition:transform .2s;flex-shrink:0;}
-.persona-btn.open svg{transform:rotate(180deg);}
-.persona-dropdown{
-  position:absolute;top:calc(100% + 4px);right:0;
-  background:#fff;border:1px solid var(--border);
-  border-radius:4px;overflow:hidden;z-index:150;
-  min-width:140px;display:none;
-  box-shadow:0 4px 12px rgba(0,0,0,.12);
-}
-.persona-dropdown.open{display:block;}
-.persona-option{
-  padding:10px 14px;font-size:13px;color:var(--text-dark);
-  cursor:pointer;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:8px;
-}
-.persona-option:last-child{border-bottom:none;}
-.persona-option:hover{background:var(--beige);}
-.persona-option.active{background:var(--beige);font-weight:700;}
-.persona-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-
-/* ===== STATUS CARDS ===== */
-.status-carousel{
-  overflow-x:auto;display:flex;gap:12px;
-  padding-bottom:12px;scrollbar-width:none;
-}
-.status-carousel::-webkit-scrollbar{display:none;}
-.status-card{
-  flex-shrink:0;width:270px;
-  border:1px solid var(--navy);border-radius:8px;
-  padding:12px;display:flex;flex-direction:column;gap:8px;
-  background:var(--beige);
-}
-.status-card.locked{background:#fff;opacity:.65;}
-.status-card-header{display:flex;align-items:center;gap:8px;}
-.status-icon-wrap{
-  width:32px;height:32px;border:1.2px solid var(--navy);
-  border-radius:50%;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.status-name{font-weight:700;font-size:16px;color:var(--navy);}
-.status-threshold{font-size:10px;color:var(--navy);}
-.status-badge{
-  margin-left:auto;border:1px solid var(--navy);color:var(--navy);
-  font-size:9px;padding:2px 5px;border-radius:4px;
-  font-family:Arial,sans-serif;white-space:nowrap;
-}
-.status-divider{height:1px;background:var(--navy);width:100%;}
-.status-perk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--navy);}
-.status-perk-icon{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.status-progress-text{font-size:10px;color:var(--navy);}
-.status-progress-track{background:var(--grey);border-radius:2px;height:3px;margin-top:4px;}
-.status-progress-fill{background:var(--navy);height:100%;border-radius:2px;transition:width .4s;}
-.dots{display:flex;justify-content:center;gap:6px;margin-top:8px;}
-.dot{width:6px;height:6px;border-radius:3px;background:var(--beige);}
-.dot.active{width:20px;background:var(--navy);}
-
-/* ===== GIFT CARDS (récompenses) ===== */
-.gift-card{
-  background:var(--beige);border-left:2px solid var(--navy);
-  border-radius:0 8px 8px 0;padding:16px 16px 16px 18px;margin-bottom:8px;
-}
-.gift-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.gift-card-label{font-size:13px;color:var(--navy);}
-.gift-card-amount{font-weight:700;font-size:18px;color:var(--navy);}
-.gift-card-info{font-size:10px;color:var(--navy);}
-.active-badge{
-  background:var(--navy);color:#fff;font-size:11px;
-  padding:2px 10px;border-radius:24px;
-  display:flex;align-items:center;gap:4px;
-}
-.active-badge::before{content:'';width:4px;height:4px;background:#fff;border-radius:50%;}
-.gift-divider{height:1px;background:var(--border);margin:10px 0;}
-.code-row{
-  border:1px dashed var(--navy);background:#fff;
-  border-radius:4px;padding:9px;
-  display:flex;align-items:center;gap:8px;cursor:pointer;
-}
-.code-text{flex:1;font-size:15px;color:var(--navy);}
-.copy-btn{
-  background:var(--navy);color:#fff;border:none;
-  border-radius:4px;padding:7px 10px;
-  font-weight:700;font-size:13px;cursor:pointer;
-  display:flex;align-items:center;gap:5px;white-space:nowrap;
-}
-.copy-btn.copied{
-  background:var(--gold);color:var(--navy);
-}
-.gift-card .copy-btn.copied{
-  background:var(--navy);color:#fff;
-}
-.gift-expiry{font-size:10px;color:var(--navy);margin-top:4px;}
-
-/* ===== POINTS STORE ===== */
-.points-carousel{overflow-x:auto;display:flex;gap:12px;padding-bottom:4px;scrollbar-width:none;}
-.points-carousel::-webkit-scrollbar{display:none;}
-.point-item{
-  flex-shrink:0;min-width:140px;width:max-content;
-  border:1px solid var(--navy);background:var(--beige);
-  border-radius:6px;padding:14px;
-  display:flex;flex-direction:column;gap:8px;
-}
-.point-item.unavailable{opacity:.5;}
-.point-item-name{font-size:14px;color:var(--navy);white-space:nowrap;}
-.point-item-pts{font-size:13px;color:var(--navy);white-space:nowrap;}
-.point-btn{
-  background:var(--navy);color:#fff;border:none;
-  border-radius:2px;padding:7px;
-  font-weight:700;font-size:13px;cursor:pointer;width:100%;
-  min-height:34px;
-}
-
-/* ===== HISTORY BTN ===== */
-.history-btn{
-  background:#fff;border:1px solid var(--navy);color:var(--navy);
-  width:100%;padding:15px;border-radius:4px;
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  cursor:pointer;font-family:'Arimo',sans-serif;font-weight:700;font-size:15px;
-}
-
-/* ===== ORDERS ===== */
-.tab-filter{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-.tab-btn{
-  border:1px solid var(--navy);background:#fff;color:var(--navy);
-  padding:6px 14px;border-radius:4px;font-size:14px;cursor:pointer;
-}
-.tab-btn.active{background:var(--navy);color:#fff;}
-.order-card{border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:12px;}
-.order-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-.order-thumb{width:90px;height:70px;background:var(--grey);border-radius:4px;flex-shrink:0;object-fit:cover;}
-.order-meta{flex:1;}
-.brand-pill{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:24px;height:24px;border-radius:50%;
-  font-size:9px;font-weight:700;margin-bottom:4px;
-}
-.brand-yk{background:var(--yellow);color:var(--navy);}
-.brand-lk{background:var(--navy);color:#fff;}
-.order-num{font-size:13px;color:var(--navy);margin-bottom:3px;}
-.order-total{font-size:15px;color:var(--navy);font-weight:700;}
-.order-count{font-size:11px;color:#777;margin-top:2px;}
-.order-status{
-  display:inline-flex;align-items:center;gap:6px;
-  border:1px solid var(--border);border-radius:4px;
-  padding:6px 12px;font-size:13px;color:var(--navy);margin-top:8px;
-}
-.status-dot-delivery{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
-.order-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
-.order-btn{
-  border:1px solid var(--navy);background:#fff;color:var(--navy);
-  padding:11px;border-radius:2px;font-size:14px;cursor:pointer;text-align:center;
-}
-.order-btn.primary{background:var(--navy);color:#fff;}
-
-/* ===== CERTIFICATS ===== */
-.cert-card{border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:12px;}
-.cert-info{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-.cert-thumb{width:90px;height:66px;background:var(--grey);border-radius:4px;flex-shrink:0;}
-.cert-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:2px;}
-.cert-artist{font-size:13px;color:var(--navy);margin-bottom:6px;}
-.cert-format{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--navy);}
-.cert-format-circle{width:22px;height:22px;border-radius:50%;background:var(--border);flex-shrink:0;}
-.cert-edition{text-align:right;flex-shrink:0;padding-left:8px;}
-.cert-edition-label{font-size:12px;color:var(--navy);}
-.cert-edition-num{font-size:15px;font-weight:700;color:var(--navy);}
-
-/* ===== WISHLIST ===== */
-.art-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.art-card{border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.art-thumb{width:100%;aspect-ratio:3/4;background:var(--grey);position:relative;}
-.art-heart{
-  position:absolute;right:7px;bottom:7px;
-  background:#fff;border-radius:50%;width:26px;height:26px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer;
-}
-.art-card-body{padding:8px 10px;}
-.art-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:1px;}
-.art-artist{font-size:11px;color:#666;}
-
-/* ===== ARTISTES ===== */
-.artist-section{margin-bottom:24px;}
-.artist-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.artist-name-row{display:flex;align-items:center;gap:10px;}
-.artist-avatar{width:42px;height:42px;border-radius:50%;background:var(--grey);flex-shrink:0;}
-.artist-name{font-size:15px;font-weight:700;color:var(--navy);}
-.artist-tag{font-size:11px;color:var(--navy);}
-.art-h-carousel{overflow-x:auto;display:flex;gap:10px;padding-bottom:8px;scrollbar-width:none;}
-.art-h-carousel::-webkit-scrollbar{display:none;}
-.art-h-card{flex-shrink:0;width:190px;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.art-h-thumb{width:100%;height:145px;background:var(--grey);}
-.art-h-body{padding:7px 9px;}
-
-/* ===== CARTES CADEAUX ===== */
-.gift-page-card{
-  background:var(--beige);border-left:2px solid var(--navy);
-  border-radius:0 8px 8px 0;padding:16px 16px 16px 18px;margin-bottom:12px;
-}
-.gift-page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-.gift-page-brand{font-family:'Libre Baskerville',serif;font-weight:700;font-size:17px;color:var(--navy);}
-.gift-page-amount{font-weight:700;font-size:22px;color:var(--navy);}
-
-/* ===== INFORMATIONS ===== */
-.info-block{border:1px solid var(--border);border-radius:4px;margin-bottom:16px;overflow:hidden;}
-.info-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:9px 12px;border-bottom:1px solid var(--border);
-}
-.info-row:last-child{border-bottom:none;}
-.info-key{font-size:12px;color:var(--navy);text-transform:uppercase;}
-.info-value{font-size:15px;color:var(--navy);text-align:right;max-width:200px;}
-.toggle-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:11px 12px;border-bottom:1px solid var(--border);
-}
-.toggle-row:last-child{border-bottom:none;}
-.toggle-label{font-size:15px;color:var(--navy);}
-.toggle{width:46px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
-.toggle.on{background:var(--navy);}
-.toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-.toggle.on .toggle-thumb{transform:translateX(20px);}
-.loyalty-mini{border:1px solid var(--border);border-radius:4px;padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer;}
-.loyalty-mini-icon{width:32px;height:32px;border-radius:50%;border:1px solid var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.loyalty-mini-info{flex:1;}
-.loyalty-mini-status{font-size:17px;font-weight:700;color:var(--navy);}
-.loyalty-mini-msg{font-size:12px;color:var(--navy);line-height:1.3;margin-top:2px;}
-.loyalty-mini-pts{font-weight:700;font-size:17px;color:var(--navy);text-align:right;}
-
-/* ===== TOAST ===== */
-.toast{
-  position:fixed;bottom:24px;left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:var(--navy);color:#fff;
-  padding:10px 20px;border-radius:20px;
-  font-size:14px;opacity:0;transition:all .3s;
-  pointer-events:none;white-space:nowrap;z-index:600;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* ===== MODALS (bottom sheet) ===== */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.45);
-  z-index:400;display:none;align-items:flex-end;justify-content:center;
-}
-.modal-overlay.open{display:flex;}
-.modal-sheet{
-  background:#fff;border-radius:21px 21px 0 0;
-  width:430px;max-height:90vh;overflow-y:auto;
-  padding:16px 16px 32px;
-}
-@media(min-width:900px){
-  .modal-overlay{align-items:center;}
-  .modal-sheet{border-radius:12px;max-width:430px;width:100%;max-height:85vh;}
-}
-.modal-handle{width:57px;height:4px;background:#D9D9D9;border-radius:32px;margin:0 auto 16px;}
-.modal-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.modal-title{font-family:Arial,sans-serif;font-weight:700;font-size:18px;color:#111;}
-.modal-close-btn{
-  width:36px;height:36px;border-radius:50%;
-  border:1px solid #888884;background:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.modal-divider{height:1px;background:rgba(0,0,0,.1);margin:12px 0;}
-
-/* Edit info form */
-.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
-.form-label{font-size:14px;color:var(--text-muted);}
-.form-input{
-  border:1px solid var(--border);border-radius:4px;
-  padding:12px;font-size:16px;font-family:Arial,sans-serif;
-  color:#000;width:100%;
-}
-.form-input:disabled{opacity:.5;background:#fff;}
-.form-input:focus{outline:2px solid var(--navy);border-color:var(--navy);}
-.galerie-block{border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px;}
-.galerie-current{background:var(--bg-light);padding:12px;}
-.galerie-current-name{font-size:16px;color:#000;font-weight:700;}
-.galerie-current-label{font-size:14px;color:var(--text-muted);margin-top:2px;}
-.galerie-select-btn{
-  border-top:1px solid var(--border);background:#fff;
-  padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;
-  font-size:16px;color:#000;cursor:pointer;border-bottom:none;border-left:none;border-right:none;
-  width:100%;font-family:Arial,sans-serif;
-}
-
-/* Tracking modal */
-.track-step{
-  display:flex;gap:12px;padding:12px 0;
-  border-bottom:1px solid var(--border);
-}
-.track-step:last-child{border-bottom:none;}
-.track-dot-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.track-dot{width:10px;height:10px;border-radius:50%;background:var(--navy);flex-shrink:0;}
-.track-dot.pending{background:var(--border);}
-.track-line{width:2px;flex:1;background:var(--border);border-radius:1px;}
-.track-line.done{background:var(--navy);}
-.track-info{}
-.track-label{font-size:14px;font-weight:700;color:var(--navy);}
-.track-label.pending{color:var(--border);}
-.track-date{font-size:12px;color:var(--text-muted);}
-
-/* History modal */
-.hist-item{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px 0;border-bottom:1px solid var(--border);
-  font-size:14px;color:var(--navy);
-}
-.hist-item:last-child{border-bottom:none;}
-.hist-pts{font-weight:700;}
-.hist-pts.gain{color:#2a6e2a;}
-.hist-pts.use{color:#b03020;}
-
-/* SVG icons shared */
-svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="shell">
 
   <!-- ===== SIDEBAR ===== -->
   <div id="drawer-overlay" onclick="closeDrawer()"></div>
-  <aside id="sidebar">
+  <aside id="sidebar" aria-hidden="true">
     <!-- User -->
-    <div class="sb-user" onclick="navigate('infos')">
+    <div class="sb-user" onclick="navigate('infos')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigate('infos')}">
       <div class="sb-avatar"></div>
       <div>
         <div class="sb-name">Camille D.</div>
@@ -625,7 +23,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
       </div>
     </div>
     <!-- Status -->
-    <div class="sb-status" onclick="navigate('fidelite')">
+    <div class="sb-status" onclick="navigate('fidelite')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigate('fidelite')}">
       <div class="sb-status-badge">
         <span class="sb-status-name" id="sb-status-name">Art Lover</span>
         <span class="sb-status-pts" id="sb-status-pts">695 pts</span>
@@ -634,7 +32,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
     <!-- Nav -->
     <nav class="sb-nav">
       <div class="sb-nav-links" id="sb-nav-links">
-        <button class="sb-link active" data-screen="commandes" onclick="navigate('commandes')">Mes commandes</button>
+        <button class="sb-link active" data-screen="commandes" onclick="navigate('commandes')" aria-current="page">Mes commandes</button>
         <button class="sb-link" data-screen="cartes" onclick="navigate('cartes')">Mes cartes cadeaux</button>
         <div class="sb-sep"></div>
         <button class="sb-link" data-screen="certificats" onclick="navigate('certificats')">Mes certificats</button>
@@ -669,7 +67,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 
     <!-- TOPBAR -->
     <header class="topbar">
-      <button class="burger-btn" onclick="toggleDrawer()" aria-label="Menu">
+      <button class="burger-btn" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" aria-controls="sidebar">
         <span></span><span></span><span></span>
       </button>
       <div class="logo-wrap">
@@ -1039,10 +437,10 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 
           <div class="section-title"><h2>Préférences</h2></div>
           <div class="info-block">
-            <div class="toggle-row"><span class="toggle-label">Newsletter e-mail</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
-            <div class="toggle-row"><span class="toggle-label">Notifications SMS</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
-            <div class="toggle-row"><span class="toggle-label">Offres partenaires</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
-            <div class="toggle-row"><span class="toggle-label">Notifications push</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label" id="toggle-label-newsletter">Newsletter e-mail</span><div class="toggle on" data-toggle-id="newsletter" role="switch" aria-checked="true" aria-labelledby="toggle-label-newsletter" tabindex="0" onclick="toggleSwitch(this)" onkeydown="toggleSwitchKey(event,this)"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label" id="toggle-label-sms">Notifications SMS</span><div class="toggle" data-toggle-id="sms" role="switch" aria-checked="false" aria-labelledby="toggle-label-sms" tabindex="0" onclick="toggleSwitch(this)" onkeydown="toggleSwitchKey(event,this)"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label" id="toggle-label-partners">Offres partenaires</span><div class="toggle on" data-toggle-id="partners" role="switch" aria-checked="true" aria-labelledby="toggle-label-partners" tabindex="0" onclick="toggleSwitch(this)" onkeydown="toggleSwitchKey(event,this)"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span class="toggle-label" id="toggle-label-push">Notifications push</span><div class="toggle" data-toggle-id="push" role="switch" aria-checked="false" aria-labelledby="toggle-label-push" tabindex="0" onclick="toggleSwitch(this)" onkeydown="toggleSwitchKey(event,this)"><div class="toggle-thumb"></div></div></div>
           </div>
 
           <div class="section-title"><h2>Mon programme fidélité</h2></div>
@@ -1071,12 +469,12 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 <div class="toast" id="toast"></div>
 
 <!-- ===== MODAL: MODIFIER INFORMATIONS ===== -->
-<div class="modal-overlay" id="edit-info-modal" onclick="closeModalOverlay(event,'edit-info-modal')">
+<div class="modal-overlay" id="edit-info-modal" onclick="closeModalOverlay(event,'edit-info-modal')" role="dialog" aria-modal="true" aria-labelledby="edit-info-modal-title">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title-row">
-      <span class="modal-title">Modifier mes informations</span>
-      <button class="modal-close-btn" onclick="closeModal('edit-info-modal')">
+      <span class="modal-title" id="edit-info-modal-title">Modifier mes informations</span>
+      <button class="modal-close-btn" onclick="closeModal('edit-info-modal')" aria-label="Fermer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -1118,12 +516,12 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 </div>
 
 <!-- ===== MODAL: SUIVRE MA LIVRAISON ===== -->
-<div class="modal-overlay" id="track-modal" onclick="closeModalOverlay(event,'track-modal')">
+<div class="modal-overlay" id="track-modal" onclick="closeModalOverlay(event,'track-modal')" role="dialog" aria-modal="true" aria-labelledby="track-modal-title">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title-row">
-      <span class="modal-title">Suivi de livraison</span>
-      <button class="modal-close-btn" onclick="closeModal('track-modal')">
+      <span class="modal-title" id="track-modal-title">Suivi de livraison</span>
+      <button class="modal-close-btn" onclick="closeModal('track-modal')" aria-label="Fermer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -1175,12 +573,12 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 </div>
 
 <!-- ===== MODAL: DÉTAIL COMMANDE ===== -->
-<div class="modal-overlay" id="order-detail-modal" onclick="closeModalOverlay(event,'order-detail-modal')">
+<div class="modal-overlay" id="order-detail-modal" onclick="closeModalOverlay(event,'order-detail-modal')" role="dialog" aria-modal="true" aria-labelledby="order-detail-modal-title">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title-row">
-      <span class="modal-title">Commande #LK-24-0021</span>
-      <button class="modal-close-btn" onclick="closeModal('order-detail-modal')">
+      <span class="modal-title" id="order-detail-modal-title">Commande #LK-24-0021</span>
+      <button class="modal-close-btn" onclick="closeModal('order-detail-modal')" aria-label="Fermer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -1212,12 +610,12 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 </div>
 
 <!-- ===== MODAL: HISTORIQUE POINTS ===== -->
-<div class="modal-overlay" id="hist-modal" onclick="closeModalOverlay(event,'hist-modal')">
+<div class="modal-overlay" id="hist-modal" onclick="closeModalOverlay(event,'hist-modal')" role="dialog" aria-modal="true" aria-labelledby="hist-modal-title">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-title-row">
-      <span class="modal-title">Historique de points</span>
-      <button class="modal-close-btn" onclick="closeModal('hist-modal')">
+      <span class="modal-title" id="hist-modal-title">Historique de points</span>
+      <button class="modal-close-btn" onclick="closeModal('hist-modal')" aria-label="Fermer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -1232,11 +630,11 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 </div>
 
 <!-- ===== MODAL: DÉCONNEXION ===== -->
-<div class="modal-overlay" id="logout-modal" onclick="closeModalOverlay(event,'logout-modal')">
+<div class="modal-overlay" id="logout-modal" onclick="closeModalOverlay(event,'logout-modal')" role="dialog" aria-modal="true" aria-labelledby="logout-modal-title">
   <div class="modal-sheet" onclick="event.stopPropagation()" style="text-align:center;">
     <div class="modal-title-row" style="justify-content:center;position:relative;">
-      <span class="modal-title" style="font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;">Se déconnecter ?</span>
-      <button class="modal-close-btn" onclick="closeModal('logout-modal')" style="position:absolute;right:0;top:50%;transform:translateY(-50%);">
+      <span class="modal-title" id="logout-modal-title" style="font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;">Se déconnecter ?</span>
+      <button class="modal-close-btn" onclick="closeModal('logout-modal')" style="position:absolute;right:0;top:50%;transform:translateY(-50%);" aria-label="Fermer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -1248,11 +646,11 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
 </div>
 
 <!-- ===== MODAL: ÉCHANGER MES POINTS ===== -->
-<div class="modal-overlay" id="exchange-modal" onclick="closeModalOverlay(event,'exchange-modal')">
+<div class="modal-overlay" id="exchange-modal" onclick="closeModalOverlay(event,'exchange-modal')" role="dialog" aria-modal="true" aria-labelledby="exchange-modal-title">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-title-row">
-      <span class="modal-title" style="font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;">Confirmez l'échange</span>
-      <button class="modal-close-btn" onclick="closeModal('exchange-modal')">
+      <span class="modal-title" id="exchange-modal-title" style="font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;">Confirmez l'échange</span>
+      <button class="modal-close-btn" onclick="closeModal('exchange-modal')" aria-label="Fermer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -1280,233 +678,6 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
   </div>
 </div>
 
-<script>
-// ===== PERSONAS =====
-const personas = {
-  explorer:{label:'EXPLORER',pbLabel:'250 € → Art Lover',pbPts:'125 pts',pbFill:25,statusIdx:0,
-    sbName:'Explorer',sbPts:'125 pts'},
-  artlover:{label:'ART LOVER',pbLabel:'500 € → Ambassador',pbPts:'695 pts',pbFill:55,statusIdx:1,
-    sbName:'Art Lover',sbPts:'695 pts'},
-  ambassador:{label:'AMBASSADOR',pbLabel:'2 000 € atteints',pbPts:'1 840 pts',pbFill:100,statusIdx:2,
-    sbName:'Ambassador',sbPts:'1 840 pts'},
-};
-let currentPersona='explorer';
-
-const statusDefs=[
-  {key:'explorer',name:'EXPLORER',threshold:"Dès l'inscription",
-   icon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#283553"/></svg>`,
-   perks:[
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,'text':'1 point par euro dépensé'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`,'text':'20 points de bienvenue'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,'text':'20 points anniversaire'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,'text':'Frais de port réduits'},
-   ],
-   progress:{text:'Il reste 250€ pour atteindre Art Lover',fill:50}},
-  {key:'artlover',name:'ART LOVER',threshold:'Dès 500 € cumulés',
-   icon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="#283553" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>`,
-   perks:[
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,'text':'1,5 point par euro dépensé'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`,'text':'50 points de bienvenue'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,'text':'Un Artprint encadré offert'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,'text':'50 points anniversaire'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,'text':'Frais de port réduits'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/><circle cx="9" cy="7" r="4"/></svg>`,'text':'Offres exclusives & évènements'},
-   ],
-   progress:{text:'Il reste 900€ pour atteindre Ambassador',fill:45}},
-  {key:'ambassador',name:'AMBASSADOR',threshold:'Dès 2 000 € cumulés',
-   icon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
-   lockedIcon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>`,
-   perks:[
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,'text':'3 points par euro dépensé'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>`,'text':'200 points de bienvenue'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,'text':'Artshot ou Sélection offert'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,'text':'Livraison offerte sans minimum'},
-     {icon:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,'text':'Accès VIP galeries'},
-   ],
-   progress:null},
-];
-
-// ===== NAVIGATE =====
-function navigate(screen){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+screen).classList.add('active');
-  document.querySelectorAll('.sb-link').forEach(l=>{
-    l.classList.toggle('active',l.dataset.screen===screen);
-  });
-  const pb=document.getElementById('progress-bar');
-  pb.classList.toggle('visible',screen==='fidelite');
-  document.getElementById('fidelite-scroll').classList.toggle('with-pb',screen==='fidelite');
-  const topRight=document.getElementById('topbar-right');
-  topRight.innerHTML=screen==='fidelite'?buildPersonaSwitcher():'';
-  if(screen==='fidelite') renderStatusCards();
-  closeDrawer();
-}
-
-// ===== DRAWER (mobile) =====
-function toggleDrawer(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('drawer-overlay').classList.toggle('open');
-}
-function closeDrawer(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('drawer-overlay').classList.remove('open');
-}
-
-// ===== PERSONA SWITCHER =====
-function buildPersonaSwitcher(){
-  const p=personas[currentPersona];
-  return `<div class="persona-switcher">
-    <button class="persona-btn" id="persona-btn" onclick="togglePersonaDD(event)">
-      <span style="font-size:8px;">●</span> ${p.label}
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
-    </button>
-    <div class="persona-dropdown" id="persona-dd">
-      ${Object.entries(personas).map(([k,v])=>`
-        <div class="persona-option ${k===currentPersona?'active':''}" onclick="selectPersona('${k}')">
-          <span class="persona-dot" style="background:${k==='ambassador'?'#c0a000':k==='artlover'?'#283553':'#3a9a3a'}"></span>
-          ${v.label}
-        </div>`).join('')}
-    </div>
-  </div>`;
-}
-function togglePersonaDD(e){
-  e.stopPropagation();
-  document.getElementById('persona-dd')?.classList.toggle('open');
-  document.getElementById('persona-btn')?.classList.toggle('open');
-}
-function selectPersona(k){
-  currentPersona=k;
-  const p=personas[k];
-  document.getElementById('pb-badge').textContent=p.label;
-  document.getElementById('pb-label').textContent=p.pbLabel;
-  document.getElementById('pb-pts').textContent=p.pbPts;
-  document.getElementById('pb-fill').style.width=p.pbFill+'%';
-  document.getElementById('fid-status-label').textContent=p.label;
-  document.getElementById('sb-status-name').textContent=p.sbName;
-  document.getElementById('sb-status-pts').textContent=p.sbPts;
-  document.getElementById('topbar-right').innerHTML=buildPersonaSwitcher();
-  renderStatusCards();
-}
-document.addEventListener('click',()=>{
-  document.getElementById('persona-dd')?.classList.remove('open');
-  document.getElementById('persona-btn')?.classList.remove('open');
-});
-
-// ===== STATUS CARDS =====
-function renderStatusCards(){
-  const activeIdx=personas[currentPersona].statusIdx;
-  const c=document.getElementById('status-carousel');
-  const d=document.getElementById('status-dots');
-  c.innerHTML=statusDefs.map((s,i)=>{
-    const locked=i>activeIdx;
-    const badge=i<=activeIdx?'ACQUIS':'À DÉBLOQUER';
-    const iconHtml=locked&&s.lockedIcon?s.lockedIcon:s.icon;
-    const perksHtml=s.perks.map(p=>`<div class="status-perk"><span class="status-perk-icon">${p.icon}</span><span>${p.text}</span></div>`).join('');
-    const progressHtml=(i===activeIdx&&s.progress)?`
-      <div class="status-divider"></div>
-      <div class="status-progress-text">${s.progress.text}</div>
-      <div class="status-progress-track"><div class="status-progress-fill" style="width:${s.progress.fill}%"></div></div>`:'';
-    return `<div class="status-card ${locked?'locked':''}" data-idx="${i}">
-      <div class="status-card-header">
-        <div class="status-icon-wrap">${iconHtml}</div>
-        <div><div class="status-name">${s.name}</div><div class="status-threshold">${s.threshold}</div></div>
-        <span class="status-badge">${badge}</span>
-      </div>
-      <div class="status-divider"></div>
-      ${perksHtml}${progressHtml}
-    </div>`;
-  }).join('');
-  d.innerHTML=statusDefs.map((_,i)=>`<div class="dot ${i===activeIdx?'active':''}"></div>`).join('');
-  setTimeout(()=>{
-    const el=c.querySelector(`[data-idx="${activeIdx}"]`);
-    if(el) el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-  },60);
-}
-
-// ===== ORDERS =====
-function filterOrders(btn,brand){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.order-card').forEach(card=>{
-    card.style.display=(brand==='all'||card.dataset.brand===brand)?'block':'none';
-  });
-}
-
-// ===== MODALS =====
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function closeModalOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id);}
-function openTrackModal(){openModal('track-modal');}
-function openOrderDetail(){openModal('order-detail-modal');}
-
-// ===== ÉCHANGER MES POINTS =====
-let pendingExchange=null;
-function openExchangeModal(label,cost){
-  const balance=parseInt(personas[currentPersona].sbPts,10);
-  pendingExchange={label,cost};
-  document.getElementById('exchange-title').textContent=label;
-  document.getElementById('exchange-cost').textContent=cost+' pts';
-  document.getElementById('exchange-balance').textContent=balance+' pts';
-  document.getElementById('exchange-after').textContent=Math.max(balance-cost,0)+' pts';
-  openModal('exchange-modal');
-}
-function confirmExchange(){
-  if(!pendingExchange)return;
-  closeModal('exchange-modal');
-  showToast(pendingExchange.label+' généré !');
-  pendingExchange=null;
-}
-
-// ===== COPY =====
-const copyIcon=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
-const copiedIcon=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l3 3 5-6"/></svg>`;
-function copyCode(code,row){
-  navigator.clipboard.writeText(code).catch(()=>{});
-  showToast('Code copié !');
-  const btn=row?.querySelector('.copy-btn');
-  if(!btn||btn.dataset.copied)return;
-  btn.dataset.copied='1';
-  const original=btn.innerHTML;
-  btn.classList.add('copied');
-  btn.innerHTML=copiedIcon+'Copié';
-  setTimeout(()=>{
-    btn.classList.remove('copied');
-    btn.innerHTML=original;
-    delete btn.dataset.copied;
-  },2000);
-}
-
-// ===== TOAST =====
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-// ===== CAROUSEL DOTS SYNC =====
-function syncCarouselDots(carousel,dotsContainer,itemSelector){
-  const items=carousel.querySelectorAll(itemSelector);
-  const dots=dotsContainer.querySelectorAll('.dot');
-  if(!items.length||!dots.length)return;
-  const center=carousel.scrollLeft+carousel.clientWidth/2;
-  let closest=0,closestDist=Infinity;
-  items.forEach((item,i)=>{
-    const dist=Math.abs((item.offsetLeft+item.offsetWidth/2)-center);
-    if(dist<closestDist){closestDist=dist;closest=i;}
-  });
-  dots.forEach((d,i)=>d.classList.toggle('active',i===closest));
-}
-function setupCarouselDots(carouselId,dotsId,itemSelector){
-  const carousel=document.getElementById(carouselId);
-  const dotsContainer=document.getElementById(dotsId);
-  if(!carousel||!dotsContainer)return;
-  carousel.addEventListener('scroll',()=>syncCarouselDots(carousel,dotsContainer,itemSelector));
-}
-setupCarouselDots('status-carousel','status-dots','.status-card');
-setupCarouselDots('points-carousel','points-dots','.point-item');
-
-// ===== INIT =====
-renderStatusCards();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
