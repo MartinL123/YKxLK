@@ -146,13 +146,13 @@ body{
 .sb-bottom{padding:0 24px 16px;}
 .sb-deconnect{
   font-size:16px;
-  color:var(--text-mid);
+  color:var(--navy);
   font-weight:700;
   font-family:'Arimo',sans-serif;
   background:none;border:none;cursor:pointer;
   padding:16px 0;
-  border-bottom:1px solid var(--border);
-  width:100%;text-align:left;
+  border-bottom:1px solid var(--navy);
+  width:100%;text-align:center;
   display:block;
 }
 
@@ -370,24 +370,28 @@ body{
 .copy-btn.copied{
   background:var(--gold);color:var(--navy);
 }
+.gift-card .copy-btn.copied{
+  background:var(--navy);color:#fff;
+}
 .gift-expiry{font-size:10px;color:var(--navy);margin-top:4px;}
 
 /* ===== POINTS STORE ===== */
 .points-carousel{overflow-x:auto;display:flex;gap:12px;padding-bottom:4px;scrollbar-width:none;}
 .points-carousel::-webkit-scrollbar{display:none;}
 .point-item{
-  flex-shrink:0;width:140px;
+  flex-shrink:0;min-width:140px;width:max-content;
   border:1px solid var(--navy);background:var(--beige);
   border-radius:6px;padding:14px;
   display:flex;flex-direction:column;gap:8px;
 }
 .point-item.unavailable{opacity:.5;}
-.point-item-name{font-size:14px;color:var(--navy);}
-.point-item-pts{font-size:13px;color:var(--navy);}
+.point-item-name{font-size:14px;color:var(--navy);white-space:nowrap;}
+.point-item-pts{font-size:13px;color:var(--navy);white-space:nowrap;}
 .point-btn{
   background:var(--navy);color:#fff;border:none;
   border-radius:2px;padding:7px;
   font-weight:700;font-size:13px;cursor:pointer;width:100%;
+  min-height:34px;
 }
 
 /* ===== HISTORY BTN ===== */
@@ -499,7 +503,7 @@ body{
 .toggle.on{background:var(--navy);}
 .toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
 .toggle.on .toggle-thumb{transform:translateX(20px);}
-.loyalty-mini{border:1px solid var(--border);border-radius:4px;padding:15px;display:flex;align-items:center;gap:12px;}
+.loyalty-mini{border:1px solid var(--border);border-radius:4px;padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer;}
 .loyalty-mini-icon{width:32px;height:32px;border-radius:50%;border:1px solid var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .loyalty-mini-info{flex:1;}
 .loyalty-mini-status{font-size:17px;font-weight:700;color:var(--navy);}
@@ -1030,7 +1034,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
           </div>
 
           <div class="section-title"><h2>Mon programme fidélité</h2></div>
-          <div class="loyalty-mini">
+          <div class="loyalty-mini" onclick="navigate('fidelite')">
             <div class="loyalty-mini-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#283553" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
             </div>
@@ -1271,7 +1275,7 @@ const personas = {
     sbName:'Explorer',sbPts:'125 pts'},
   artlover:{label:'ART LOVER',pbLabel:'500 € → Ambassador',pbPts:'695 pts',pbFill:55,statusIdx:1,
     sbName:'Art Lover',sbPts:'695 pts'},
-  ambassador:{label:'AMBASSADOR',pbLabel:'2 000 € atteints 🎉',pbPts:'1 840 pts',pbFill:100,statusIdx:2,
+  ambassador:{label:'AMBASSADOR',pbLabel:'2 000 € atteints',pbPts:'1 840 pts',pbFill:100,statusIdx:2,
     sbName:'Ambassador',sbPts:'1 840 pts'},
 };
 let currentPersona='explorer';
@@ -1319,6 +1323,7 @@ function navigate(screen){
   });
   const pb=document.getElementById('progress-bar');
   pb.classList.toggle('visible',screen==='fidelite');
+  document.getElementById('fidelite-scroll').classList.toggle('with-pb',screen==='fidelite');
   const topRight=document.getElementById('topbar-right');
   topRight.innerHTML=screen==='fidelite'?buildPersonaSwitcher():'';
   if(screen==='fidelite') renderStatusCards();
@@ -1385,7 +1390,7 @@ function renderStatusCards(){
     const badge=i<=activeIdx?'ACQUIS':'À DÉBLOQUER';
     const iconHtml=locked&&s.lockedIcon?s.lockedIcon:s.icon;
     const perksHtml=s.perks.map(p=>`<div class="status-perk"><span class="status-perk-icon">${p.icon}</span><span>${p.text}</span></div>`).join('');
-    const progressHtml=(!locked&&s.progress)?`
+    const progressHtml=(i===activeIdx&&s.progress)?`
       <div class="status-divider"></div>
       <div class="status-progress-text">${s.progress.text}</div>
       <div class="status-progress-track"><div class="status-progress-fill" style="width:${s.progress.fill}%"></div></div>`:'';
