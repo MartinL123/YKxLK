@@ -19,6 +19,7 @@
   --text-mid:#444440;
   --text-muted:#888884;
   --white:#FFFFFF;
+  --gold:#FDF298;
 }
 body{
   background:#f0efed;
@@ -33,6 +34,7 @@ body{
 #shell{
   display:flex;
   width:430px;
+  max-width:100%;
   min-height:100vh;
   background:#fff;
   position:relative;
@@ -78,7 +80,6 @@ body{
 }
 
 #drawer-overlay{
-  display:none;
   position:fixed;inset:0;
   background:rgba(0,0,0,.35);
   z-index:199;
@@ -98,8 +99,8 @@ body{
 .sb-avatar{
   width:32px;height:32px;
   border-radius:16px;
-  background:var(--bg-light);
-  border:1.6px solid var(--border);
+  background:var(--beige);
+  border:1.6px solid var(--grey);
   flex-shrink:0;
 }
 .sb-name{font-size:14px;font-weight:700;color:#111;}
@@ -110,8 +111,8 @@ body{
   border-bottom:1px solid var(--border);
 }
 .sb-status-badge{
-  background:var(--bg-light);
-  border:1px solid var(--border);
+  background:var(--beige);
+  border:1px solid var(--grey);
   border-radius:4px;
   padding:8px 10px;
   display:flex;justify-content:space-between;align-items:center;
@@ -121,7 +122,7 @@ body{
 
 .sb-nav{
   flex:1;
-  background:var(--bg-light);
+  background:var(--beige);
   display:flex;flex-direction:column;justify-content:space-between;
   overflow-y:auto;
 }
@@ -236,8 +237,17 @@ body{
 /* SCREENS */
 .screen{display:none;overflow-y:auto;flex:1;}
 .screen.active{display:block;}
-.screen-scroll{height:calc(100vh - 68px);overflow-y:auto;}
-.screen-scroll.with-pb{height:calc(100vh - 68px - 63px);}
+.screen-scroll{
+  height:calc(100vh - 68px);
+  height:calc(100dvh - 68px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.screen-scroll.with-pb{
+  height:calc(100vh - 68px - 63px);
+  height:calc(100dvh - 68px - 63px);
+}
 .section-content{padding:16px;}
 
 /* SECTION TITLE */
@@ -357,6 +367,9 @@ body{
   font-weight:700;font-size:13px;cursor:pointer;
   display:flex;align-items:center;gap:5px;white-space:nowrap;
 }
+.copy-btn.copied{
+  background:var(--gold);color:var(--navy);
+}
 .gift-expiry{font-size:10px;color:var(--navy);margin-top:4px;}
 
 /* ===== POINTS STORE ===== */
@@ -421,14 +434,13 @@ body{
 
 /* ===== CERTIFICATS ===== */
 .cert-card{border:1px solid var(--border);border-radius:4px;padding:16px;margin-bottom:12px;}
-.cert-info{display:flex;gap:12px;margin-bottom:12px;}
+.cert-info{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
 .cert-thumb{width:90px;height:66px;background:var(--grey);border-radius:4px;flex-shrink:0;}
 .cert-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:2px;}
 .cert-artist{font-size:13px;color:var(--navy);margin-bottom:6px;}
-.cert-meta{display:flex;align-items:center;gap:8px;}
 .cert-format{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--navy);}
 .cert-format-circle{width:22px;height:22px;border-radius:50%;background:var(--border);flex-shrink:0;}
-.cert-edition{text-align:right;margin-left:auto;}
+.cert-edition{text-align:right;flex-shrink:0;padding-left:8px;}
 .cert-edition-label{font-size:12px;color:var(--navy);}
 .cert-edition-num{font-size:15px;font-weight:700;color:var(--navy);}
 
@@ -619,7 +631,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
         <button class="sb-link" data-screen="infos" onclick="navigate('infos')">Mes informations</button>
       </div>
       <div class="sb-bottom">
-        <button class="sb-deconnect">Déconnexion</button>
+        <button class="sb-deconnect" onclick="openModal('logout-modal')">Déconnexion</button>
       </div>
     </nav>
     <!-- External links -->
@@ -740,7 +752,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
               </div>
             </div>
             <div style="height:1px;background:var(--border);margin:10px 0;"></div>
-            <div class="code-row" onclick="copyCode('YK-GIFT-7823-4490')">
+            <div class="code-row" onclick="copyCode('YK-GIFT-7823-4490', this)">
               <span class="code-text">YK-GIFT-7823-4490</span>
               <button class="copy-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -761,7 +773,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
               </div>
             </div>
             <div style="height:1px;background:var(--border);margin:10px 0;"></div>
-            <div class="code-row" onclick="copyCode('LK-GIFT-3341-8872')">
+            <div class="code-row" onclick="copyCode('LK-GIFT-3341-8872', this)">
               <span class="code-text">LK-GIFT-3341-8872</span>
               <button class="copy-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -782,19 +794,17 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
           <div class="cert-card">
             <div class="cert-info">
               <div class="cert-thumb" style="background:linear-gradient(135deg,#c8b89a,#8a7060);"></div>
-              <div>
+              <div style="flex:1;min-width:0;">
                 <div class="cert-title">Tutto Passa</div>
                 <div class="cert-artist">Robbie McIntosh</div>
-                <div class="cert-meta">
-                  <div class="cert-format">
-                    <div class="cert-format-circle"></div>
-                    <span>Tirage 90×60</span>
-                  </div>
-                  <div class="cert-edition" style="margin-left:auto;">
-                    <div class="cert-edition-label">Édition</div>
-                    <div class="cert-edition-num">12 / 50</div>
-                  </div>
+                <div class="cert-format">
+                  <div class="cert-format-circle"></div>
+                  <span>Tirage 90×60</span>
                 </div>
+              </div>
+              <div class="cert-edition">
+                <div class="cert-edition-label">Édition</div>
+                <div class="cert-edition-num">12 / 50</div>
               </div>
             </div>
             <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
@@ -802,19 +812,17 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
           <div class="cert-card">
             <div class="cert-info">
               <div class="cert-thumb" style="background:linear-gradient(135deg,#a8c8a0,#507050);"></div>
-              <div>
+              <div style="flex:1;min-width:0;">
                 <div class="cert-title">Blue Morning</div>
                 <div class="cert-artist">Sofia Arnér</div>
-                <div class="cert-meta">
-                  <div class="cert-format">
-                    <div class="cert-format-circle"></div>
-                    <span>Tirage 60×40</span>
-                  </div>
-                  <div class="cert-edition" style="margin-left:auto;">
-                    <div class="cert-edition-label">Édition</div>
-                    <div class="cert-edition-num">7 / 30</div>
-                  </div>
+                <div class="cert-format">
+                  <div class="cert-format-circle"></div>
+                  <span>Tirage 60×40</span>
                 </div>
+              </div>
+              <div class="cert-edition">
+                <div class="cert-edition-label">Édition</div>
+                <div class="cert-edition-num">7 / 30</div>
               </div>
             </div>
             <button class="btn-primary" style="font-size:14px;padding:12px;">Télécharger mon certificat</button>
@@ -845,7 +853,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
               <span class="active-badge">Active</span>
             </div>
             <div class="gift-divider"></div>
-            <div class="code-row" onclick="copyCode('YK-XXXX-XXXX-2847')">
+            <div class="code-row" onclick="copyCode('YK-XXXX-XXXX-2847', this)">
               <span class="code-text">YK-XXXX-XXXX-2847</span>
               <button class="copy-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -864,7 +872,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
               <span class="active-badge">Active</span>
             </div>
             <div class="gift-divider"></div>
-            <div class="code-row" onclick="copyCode('LK-XXXX-XXXX-2569')">
+            <div class="code-row" onclick="copyCode('LK-XXXX-XXXX-2569', this)">
               <span class="code-text">LK-XXXX-XXXX-2569</span>
               <button class="copy-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -876,7 +884,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
         <!-- Échanger mes points -->
         <div class="section-content" style="border-top:1px solid var(--border);">
           <div class="section-title"><h2>Échanger mes points</h2><p>Boutique de points</p></div>
-          <div class="points-carousel">
+          <div class="points-carousel" id="points-carousel">
             <div class="point-item unavailable">
               <div class="point-item-name">Bon d'achat 10 €</div>
               <div class="point-item-pts">75 pts</div>
@@ -890,20 +898,20 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
             <div class="point-item">
               <div class="point-item-name">Bon d'achat 30 €</div>
               <div class="point-item-pts">225 pts</div>
-              <button class="point-btn" onclick="showToast('Bon d\'achat 30 € généré !')">Échanger</button>
+              <button class="point-btn" onclick="openExchangeModal('Bon d\'achat | 30 €',225)">Échanger</button>
             </div>
             <div class="point-item">
               <div class="point-item-name">Bon d'achat 50 €</div>
               <div class="point-item-pts">375 pts</div>
-              <button class="point-btn" onclick="showToast('Bon d\'achat 50 € généré !')">Échanger</button>
+              <button class="point-btn" onclick="openExchangeModal('Bon d\'achat | 50 €',375)">Échanger</button>
             </div>
             <div class="point-item">
               <div class="point-item-name">Bon d'achat 100 €</div>
               <div class="point-item-pts">750 pts</div>
-              <button class="point-btn" onclick="showToast('Bon d\'achat 100 € généré !')">Échanger</button>
+              <button class="point-btn" onclick="openExchangeModal('Bon d\'achat | 100 €',750)">Échanger</button>
             </div>
           </div>
-          <div class="dots" style="margin-top:8px;">
+          <div class="dots" style="margin-top:8px;" id="points-dots">
             <div class="dot"></div><div class="dot"></div>
             <div class="dot active"></div>
             <div class="dot"></div><div class="dot"></div>
@@ -1207,6 +1215,55 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
   </div>
 </div>
 
+<!-- ===== MODAL: DÉCONNEXION ===== -->
+<div class="modal-overlay" id="logout-modal" onclick="closeModalOverlay(event,'logout-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="text-align:center;">
+    <div class="modal-title-row" style="justify-content:center;position:relative;">
+      <span class="modal-title" style="font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;">Se déconnecter ?</span>
+      <button class="modal-close-btn" onclick="closeModal('logout-modal')" style="position:absolute;right:0;top:50%;transform:translateY(-50%);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closeModal('logout-modal')">Annuler</button>
+      <button class="btn-primary" onclick="closeModal('logout-modal');closeDrawer();showToast('Vous avez été déconnecté')">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: ÉCHANGER MES POINTS ===== -->
+<div class="modal-overlay" id="exchange-modal" onclick="closeModalOverlay(event,'exchange-modal')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-title-row">
+      <span class="modal-title" style="font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;">Confirmez l'échange</span>
+      <button class="modal-close-btn" onclick="closeModal('exchange-modal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="height:1px;background:var(--beige);margin:12px 0;"></div>
+    <div style="font-family:'Arimo',sans-serif;color:var(--text-dark);">
+      <div id="exchange-title" style="font-weight:700;font-size:18px;margin-bottom:4px;">Bon d'achat | 30 €</div>
+      <div id="exchange-subtitle" style="font-size:16px;">Valable 12 mois</div>
+    </div>
+    <div style="height:1px;background:var(--beige);margin:12px 0;"></div>
+    <div style="background:var(--beige);border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14px;">
+      <div style="background:#fff;border-radius:4px;padding:4px 8px;display:flex;justify-content:space-between;align-items:center;">
+        <span>Coût de l'échange</span><strong id="exchange-cost">225 pts</strong>
+      </div>
+      <div style="background:#fff;border-radius:4px;padding:4px 8px;display:flex;justify-content:space-between;align-items:center;">
+        <span>Votre solde actuel</span><strong id="exchange-balance">695 pts</strong>
+      </div>
+      <div style="background:#fff;border-radius:4px;padding:4px 8px;display:flex;justify-content:space-between;align-items:center;">
+        <span>Solde après l'échange</span><strong id="exchange-after">470 pts</strong>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closeModal('exchange-modal')">Annuler</button>
+      <button class="btn-primary" onclick="confirmExchange()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== PERSONAS =====
 const personas = {
@@ -1365,10 +1422,41 @@ function closeModalOverlay(e,id){if(e.target===document.getElementById(id))close
 function openTrackModal(){openModal('track-modal');}
 function openOrderDetail(){openModal('order-detail-modal');}
 
+// ===== ÉCHANGER MES POINTS =====
+let pendingExchange=null;
+function openExchangeModal(label,cost){
+  const balance=parseInt(personas[currentPersona].sbPts,10);
+  pendingExchange={label,cost};
+  document.getElementById('exchange-title').textContent=label;
+  document.getElementById('exchange-cost').textContent=cost+' pts';
+  document.getElementById('exchange-balance').textContent=balance+' pts';
+  document.getElementById('exchange-after').textContent=Math.max(balance-cost,0)+' pts';
+  openModal('exchange-modal');
+}
+function confirmExchange(){
+  if(!pendingExchange)return;
+  closeModal('exchange-modal');
+  showToast(pendingExchange.label+' généré !');
+  pendingExchange=null;
+}
+
 // ===== COPY =====
-function copyCode(code){
+const copyIcon=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+const copiedIcon=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l3 3 5-6"/></svg>`;
+function copyCode(code,row){
   navigator.clipboard.writeText(code).catch(()=>{});
   showToast('Code copié !');
+  const btn=row?.querySelector('.copy-btn');
+  if(!btn||btn.dataset.copied)return;
+  btn.dataset.copied='1';
+  const original=btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML=copiedIcon+'Copié';
+  setTimeout(()=>{
+    btn.classList.remove('copied');
+    btn.innerHTML=original;
+    delete btn.dataset.copied;
+  },2000);
 }
 
 // ===== TOAST =====
@@ -1377,6 +1465,28 @@ function showToast(msg){
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2200);
 }
+
+// ===== CAROUSEL DOTS SYNC =====
+function syncCarouselDots(carousel,dotsContainer,itemSelector){
+  const items=carousel.querySelectorAll(itemSelector);
+  const dots=dotsContainer.querySelectorAll('.dot');
+  if(!items.length||!dots.length)return;
+  const center=carousel.scrollLeft+carousel.clientWidth/2;
+  let closest=0,closestDist=Infinity;
+  items.forEach((item,i)=>{
+    const dist=Math.abs((item.offsetLeft+item.offsetWidth/2)-center);
+    if(dist<closestDist){closestDist=dist;closest=i;}
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===closest));
+}
+function setupCarouselDots(carouselId,dotsId,itemSelector){
+  const carousel=document.getElementById(carouselId);
+  const dotsContainer=document.getElementById(dotsId);
+  if(!carousel||!dotsContainer)return;
+  carousel.addEventListener('scroll',()=>syncCarouselDots(carousel,dotsContainer,itemSelector));
+}
+setupCarouselDots('status-carousel','status-dots','.status-card');
+setupCarouselDots('points-carousel','points-dots','.point-item');
 
 // ===== INIT =====
 renderStatusCards();
